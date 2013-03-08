@@ -1,6 +1,5 @@
 (ns rdfa.dom)
 
-
 (defprotocol DomAccess
   (get-name [this])
   (get-attr [this attr-name])

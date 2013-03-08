@@ -7,6 +7,7 @@
             :distribution :repo}
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.4.0"]
+                 [org.jsoup/jsoup "1.7.2"]
                  [net.sourceforge.nekohtml/nekohtml "1.9.15"]]
   :profiles {:dev {:plugins [[lein-midje "2.0.0-SNAPSHOT"]]
                    :dependencies [[midje "1.4.0"]

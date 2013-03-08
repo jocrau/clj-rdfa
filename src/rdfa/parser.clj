@@ -2,5 +2,3 @@
 
 (defprotocol Parser
   (get-rdfa [source] [source options]))
-
-

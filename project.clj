@@ -30,7 +30,7 @@
   :figwheel {:open-file-command "open-in-intellij"}
   :repositories {"stuartsierra-releases" "http://stuartsierra.com/maven2"}
   :source-paths ["src/clj" "src/cljs" "src/cljc"]
-  :clean-targets ^{:protect false} ["target" "resources/public/js/target" "resources/public/js/main.js"]
+  :clean-targets ^{:protect false} ["target" "resources/public/js/target" "resources/public/js/cls-rdfa.js"]
   :target-dir "target"
   :jar-exclusions [#"(?:^|/)\..+"]
   :main rdfa.system)

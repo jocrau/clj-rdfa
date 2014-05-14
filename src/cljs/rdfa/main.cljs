@@ -1,6 +1,8 @@
 (ns rdfa.main
-  (:require [rdfa.core :refer [extract-rdfa]]
-            [rdfa.repr :refer [print-result]]))
+  (:require
+    [rdfa.core :refer [extract-rdfa]]
+    [rdfa.repr :refer [print-result]]
+    [goog.string :as gstring]))
 
 (defn ^:export get-data
   ([]
@@ -9,3 +11,9 @@
    (let [document-element (.-documentElement doc)
          location (.-URL doc)]
      (extract-rdfa :html document-element location))))
+
+(defn ^:export render-rdfa [container-id]
+  (let [element (.getElementById js/document container-id)
+        data (get-data)]
+    (aset element "innerHTML" (gstring/htmlEscape (print-result data)))
+    nil))

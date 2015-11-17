@@ -1,10 +1,5 @@
-pom.xml
-*jar
-/lib/
-/classes/
-.lein-failures
-.lein-deps-sum
-*war
+/pom.xml
+/target
 /docs/uberdoc.html
-.classpath
-.project
+/.lein-failures
+/.lein-deps-sum

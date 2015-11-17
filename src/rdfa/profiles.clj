@@ -40,7 +40,14 @@
                 "sioc" "http://rdfs.org/sioc/ns#",
                 "v" "http://rdf.data-vocabulary.org/#",
                 "vcard" "http://www.w3.org/2006/vcard/ns#",
-                "schema" "http://schema.org/"}
+                "schema" "http://schema.org/"
+                "rr" "http://www.w3.org/ns/r2rml#"
+                "sd" "http://www.w3.org/ns/sparql-service-description#"
+                "prov" "http://www.w3.org/ns/prov#"
+                "dc11" "http://purl.org/dc/elements/1.1/"}
+                "dcat" "http://www.w3.org/ns/dcat#",
+                "qb" "http://purl.org/linked-data/cube#",
+                "org" "http://www.w3.org/ns/org#",
    :term-map {"describedby" "http://www.w3.org/2007/05/powder-s#describedby",
               "license" "http://www.w3.org/1999/xhtml/vocab#license",
               "role" "http://www.w3.org/1999/xhtml/vocab#role"}
@@ -94,9 +101,13 @@
 
 ; TODO: vary these functions by profile (a lot only applies to (x)html)
 
+(defn get-base [el profile]
+  (if (= profile :xml) (dom/get-attr el "xml:base") nil))
+
 (defn get-host-env [profile root]
-  (let [base (if-let [el (first (dom/find-by-tag root "base"))]
-               (dom/get-attr el "href"))
+  (let [base (or (if-let [el (first (dom/find-by-tag root "base"))]
+                 (dom/get-attr el "href"))
+                 (get-base root profile))
         context (contexts profile)]
     (assoc context
            :profile profile
@@ -119,15 +130,23 @@
         el (data :element)
         tag (dom/get-name el)
         datetime (or (dom/get-attr el "datetime")
-                     (if (= tag "time") (dom/get-text el)))]
+                     (if (= tag "time") (dom/get-text el)))
+        mute-plain-relrev (and (= profile :html) (data :property))]
     (assoc data
-           :base (if (= profile :xml) (dom/get-attr el "xml:base")
-                   nil)
+           :base (get-base el profile)
            :about (or (data :about)
                       (if (and (or (= tag "head") (= tag "body"))
                             (empty? resources))
                         (:id (env :parent-object))))
            :lang (or (data :lang) (dom/get-attr el "lang"))
+           :rel (if-let [rel (data :rel)]
+                  (if (or (not mute-plain-relrev)
+                          (> (.indexOf rel ":") -1))
+                    rel))
+           :rev (if-let [rev (data :rev)]
+                  (if (or (not mute-plain-relrev)
+                          (> (.indexOf rev ":") -1))
+                    rev))
            :content (or datetime
                         (if (= tag "data") (dom/get-attr el "value"))
                         (data :content))

@@ -27,7 +27,7 @@
     ([source] (get-rdfa source {}))
     ([source {:keys [profile location]
               :or {location source
-                   profile (rdfa.profiles/detect-host-language :location location)}}]
+                   profile (rdfa.profiles/detect-host-language :location source)}}]
       (try
         (try
           (rdfa.core/extract-rdfa profile (.get (Jsoup/connect (str (java.net.URI. source)))) location)

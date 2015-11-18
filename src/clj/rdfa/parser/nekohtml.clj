@@ -28,7 +28,7 @@
     ([source] (get-rdfa source {}))
     ([source {:keys [profile location]
               :or {location source
-                   profile (rdfa.profiles/detect-host-language :location location)}}]
+                   profile (rdfa.profiles/detect-host-language :location source)}}]
       (try (let [parse-fn (if (= profile :html) html-dom-parse dom-parse)
                  root (.getDocumentElement (parse-fn source))]
              (rdfa.core/extract-rdfa profile root location))

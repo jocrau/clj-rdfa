@@ -3,7 +3,8 @@
   (:require (rdfa stddom profiles core))
   (:import [javax.xml.parsers DocumentBuilderFactory]
            [org.apache.xerces.parsers DOMParser]
-           [org.cyberneko.html HTMLConfiguration]))
+           [org.cyberneko.html HTMLConfiguration]
+           [org.xml.sax InputSource]))
 
 (defn- dom-parse [source]
   (let [factory (doto (DocumentBuilderFactory/newInstance)
@@ -19,7 +20,7 @@
                 ; at least support a manually provided encoding.
                 (.setProperty "http://cyberneko.org/html/properties/default-encoding" "utf-8")))
         (.setFeature "http://xml.org/sax/features/namespaces" false)
-        (.parse (org.xml.sax.InputSource. source)))
+        (.parse (InputSource. source)))
     (getDocument)))
 
 (extend-type String

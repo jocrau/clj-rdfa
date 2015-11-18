@@ -5,3 +5,4 @@
 /.lein-deps-sum
 .lein-repl-history
 application.js
+main.js

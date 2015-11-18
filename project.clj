@@ -14,7 +14,7 @@
                    :dependencies [[midje "1.8.2"]]}}
   :plugins [[lein-cljsbuild "1.1.1"]]
   :cljsbuild {:builds [{:source-paths ["src/cljs" "src/cljc"]
-                        :compiler     {:output-to             "resources/public/js/application.js"
+                        :compiler     {:output-to             "resources/public/js/main.js"
                                        :print-input-delimiter true
                                        :pretty-print          true}}]}
   :repositories {"stuartsierra-releases" "http://stuartsierra.com/maven2"}

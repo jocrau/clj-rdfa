@@ -30,11 +30,11 @@
   (find-by-tag [this tag]
                (node-list (.getElementsByTagName this tag)))
   (get-child-elements [this]
-    (filter #(= (.-nodeType %1) Node/ELEMENT_NODE)
+    (filter #(= (.-nodeType %1) js/Node.ELEMENT_NODE)
             (node-list (.-childNodes this))))
   (get-text [this]
     (letfn [(get-values [node]
-              (cons (if (= (.-nodeType node) Node/TEXT_NODE)
+              (cons (if (= (.-nodeType node) js/Node.TEXT_NODE)
                       (.-nodeValue node))
                     (map get-values (node-list (.-childNodes node)))))]
       (string/join (flatten (get-values this)))))
@@ -47,7 +47,7 @@
           (rest nodes)
           (let [node (first nodes)]
             (do
-              (if (= (.-nodeType node) Node/ELEMENT_NODE)
+              (if (= (.-nodeType node) js/Node.ELEMENT_NODE)
                 (do
                   (if (not-empty lang)
                     (.setAttribute node "xml:lang" lang))

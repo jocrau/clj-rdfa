@@ -3,3 +3,5 @@
 /docs/uberdoc.html
 /.lein-failures
 /.lein-deps-sum
+.lein-repl-history
+application.js

@@ -1,6 +1,7 @@
 (ns rdfa.cli
   (:gen-class)
-  (:require (rdfa repr parser)))
+  (:require rdfa.repr
+            rdfa.parser.nekohtml))
 
 
 ; TODO: would be more useful if env contained data about *used* prefixes.

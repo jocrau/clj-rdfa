@@ -1,8 +1,8 @@
 (ns rdfa.core
   (:require [clojure.string :as string]
             [rdfa.dom :as dom]
-            [rdfa.profiles :as profiles])
-  (:use [rdfa.utils :only [resolve-iri]]))
+            [rdfa.profiles :as profiles]
+            [rdfa.utils :refer [resolve-iri]]))
 
 (defrecord BNode [id])
 (defrecord IRI [id])

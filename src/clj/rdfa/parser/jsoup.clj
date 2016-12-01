@@ -5,8 +5,7 @@
   (:require rdfa.core)
   (:import [java.net URI]
            [org.jsoup Jsoup]
-           [org.jsoup.select Elements]
-           [org.jsoup.nodes Node Attribute Attributes Comment DataNode Document Element TextNode]))
+           [org.jsoup.nodes Node Element  ]))
 
 (extend-type Node
   DomAccess
@@ -30,7 +29,7 @@
                    profile (rdfa.profiles/detect-host-language :location source)}}]
       (try
         (try
-          (rdfa.core/extract-rdfa profile (.get (Jsoup/connect (str (java.net.URI. source)))) location)
+          (rdfa.core/extract-rdfa profile (.get (Jsoup/connect (str (URI. source)))) location)
           (catch Exception e
             (rdfa.core/extract-rdfa profile (Jsoup/parse source) location)))
         (catch Exception e

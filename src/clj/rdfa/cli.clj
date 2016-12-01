@@ -1,7 +1,8 @@
 (ns rdfa.cli
   (:gen-class)
   (:require rdfa.repr
-            rdfa.parser.nekohtml))
+            rdfa.parser)
+  (:import [java.net URI]))
 
 
 ; TODO: would be more useful if env contained data about *used* prefixes.
@@ -18,7 +19,7 @@
 
 (defn -main [& args]
   (doseq [path args]
-    (let [location (.. (java.net.URI. path) (toString))
+    (let [location (.. (URI. path) (toString))
           {:keys [env triples proc-triples]} (rdfa.parser/get-rdfa location)]
       (do
         ;(print-prefixes env)

@@ -1,4 +1,4 @@
-(ns rdfa.utils
+s(ns rdfa.utils
   (:require [goog.Uri :as uri]))
 
 ;; This is just a quick fix for a bug in goog.Uri: The problem is, 

@@ -1,4 +1,5 @@
-(ns rdfa.utils)
+(ns rdfa.utils
+  (:import [java.net URI]))
 
 (defn resolve-iri [iref base]
   (if (not-empty iref)
@@ -8,5 +9,5 @@
     (if (.startsWith iref "?")
       (str (let [i (.indexOf base "?")]
              (if (> i -1) (subs base 0 i) base)) iref)
-      (.. (java.net.URI. base) (resolve iref) (normalize) (toString)))
+      (.. (URI. base) (resolve iref) (normalize) (toString)))
     base))

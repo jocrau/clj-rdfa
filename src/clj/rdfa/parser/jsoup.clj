@@ -1,19 +1,20 @@
 (ns rdfa.parser.jsoup
   (:use rdfa.parser
-        rdfa.dom
-        [clojure.string :only (join split)])
-  (:require rdfa.core)
+        rdfa.dom)
+  (:require [clojure.string :refer [join split]]
+            [rdfa.core :refer [extract-rdfa error-results]]
+            [rdfa.profiles :refer [detect-host-language]])
   (:import [java.net URI]
            [org.jsoup Jsoup]
-           [org.jsoup.nodes Node Element  ]))
+           [org.jsoup.nodes Node Element]))
 
 (extend-type Node
   DomAccess
   (get-name [this] (.nodeName this))
   (get-attr [this attr-name] (when (.hasAttr this attr-name) (.attr this attr-name)))
   (get-ns-map [this]
-    (into {} (map #(when (.startsWith (.getKey %) "xmlns:") 
-                     [(.substring (.getKey %) 6) (.getValue %)])
+    (into {} (map #(when (.startsWith (.getKey %) "xmlns:")
+                    [(.substring (.getKey %) 6) (.getValue %)])
                   (.attributes this))))
   (is-root? [this] (= (.ownerDocument this) this))
   (find-by-tag [this tag] (.getElementsByTag this tag))
@@ -25,12 +26,10 @@
   (get-rdfa
     ([source] (get-rdfa source {}))
     ([source {:keys [profile location]
-              :or {location source
-                   profile (rdfa.profiles/detect-host-language :location source)}}]
-      (try
-        (try
-          (rdfa.core/extract-rdfa profile (.get (Jsoup/connect (str (URI. source)))) location)
-          (catch Exception e
-            (rdfa.core/extract-rdfa profile (Jsoup/parse source) location)))
-        (catch Exception e
-          (rdfa.core/error-results (.getMessage e) "en"))))))
+              :or   {location (str source)
+                     profile  (detect-host-language :location (str source))}}]
+     (try
+       (let [string (.get (Jsoup/connect (str source)))]
+         (extract-rdfa profile string location))
+       (catch Exception e
+         (error-results (.getMessage e) "en"))))))

@@ -1,29 +1,16 @@
 (ns rdfa.cli
-  (:gen-class)
-  (:require rdfa.repr
-            rdfa.parser)
-  (:import [java.net URI]))
-
-
-; TODO: would be more useful if env contained data about *used* prefixes.
-;(defn print-prefixes [{prefix-map :prefix-map vocab :vocab}]
-;  (letfn [(printpfx [pfx iri]
-;            (println (str "@prefix " pfx ": <" iri "> .")))]
-;    (if vocab (printpfx "" vocab))
-;    (doseq [[pfx iri] prefix-map]
-;      (printpfx pfx iri))))
-
-(defn print-triples [triples]
-  (doseq [triple triples]
-    (-> triple rdfa.repr/repr-triple println)))
+  (:require
+    [rdfa.repr :refer [print-prefixes print-triples]]
+    [rdfa.parser :refer [get-rdfa]]
+    [rdfa.parser.jsoup])
+  (:gen-class))
 
 (defn -main [& args]
-  (doseq [path args]
-    (let [location (.. (URI. path) (toString))
-          {:keys [env triples proc-triples]} (rdfa.parser/get-rdfa location)]
-      (do
-        ;(print-prefixes env)
-        (print-triples triples)
-        ; TODO: only if --proc in args
-        (print-triples proc-triples)))))
+  (let [{:keys [env triples proc-triples]} (get-rdfa (first args))]
+    (str (print-prefixes env)
+         (print-triples triples)
+         (print-triples proc-triples))))
 
+(comment
+  (-main "http://iricelino.org/rdfa/sample-annotated-page.html")
+  )

@@ -1,11 +1,11 @@
 (ns rdfa.parser.jsoup
   (:use rdfa.parser
-        rdfa.dom)
+        rdfa.dom
+        rdfa.utils)
   (:require [clojure.string :refer [join split]]
             [rdfa.core :refer [extract-rdfa error-results]]
             [rdfa.profiles :refer [detect-host-language]])
-  (:import [java.net URI]
-           [org.jsoup Jsoup]
+  (:import [org.jsoup Jsoup]
            [org.jsoup.nodes Node Element]))
 
 (extend-type Node
@@ -26,10 +26,12 @@
   (get-rdfa
     ([source] (get-rdfa source {}))
     ([source {:keys [profile location]
-              :or   {location (str source)
+              :or   {location source
                      profile  (detect-host-language :location (str source))}}]
      (try
-       (let [string (.get (Jsoup/connect (str source)))]
-         (extract-rdfa profile string location))
+       (let [root (if (iri-string? source)
+                    (.get (Jsoup/connect source))
+                    (Jsoup/parse source))]
+         (extract-rdfa profile root location))
        (catch Exception e
          (error-results (.getMessage e) "en"))))))

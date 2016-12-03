@@ -15,6 +15,11 @@
          (try (.-xml node)
               (catch js/Exception e)))))
 
+(defn- get-values [node]
+  (cons (if (= (.-nodeType node) js/Node.TEXT_NODE)
+          (.-nodeValue node))
+        (map get-values (node-list (.-childNodes node)))))
+
 (extend-type js/Node
   rdfa.dom/DomAccess
   (get-name [this] (.-nodeName this))
@@ -34,11 +39,7 @@
     (filter #(= (.-nodeType %1) js/Node.ELEMENT_NODE)
             (node-list (.-childNodes this))))
   (get-text [this]
-    (letfn [(get-values [node]
-                        (cons (if (= (.-nodeType node) js/Node.TEXT_NODE)
-                                (.-nodeValue node))
-                              (map get-values (node-list (.-childNodes node)))))]
-      (string/join (flatten (get-values this)))))
+    (string/join (flatten (get-values this))))
   (get-inner-xml
     [this xmlns-map lang]
     (loop [nodes (node-list (.-childNodes this))

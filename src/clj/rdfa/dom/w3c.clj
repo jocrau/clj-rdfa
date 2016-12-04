@@ -1,4 +1,4 @@
-(ns rdfa.stddom
+(ns rdfa.dom.w3c
   (:require clojure.string)
   (:require (rdfa dom))
   (:import [org.w3c.dom Node]))

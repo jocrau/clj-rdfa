@@ -1,4 +1,4 @@
-(ns rdfa.jsdom
+(ns rdfa.dom.google
   (:require [clojure.string :as string]
             [goog.dom :as gdom]
             [rdfa.dom :as dom]))

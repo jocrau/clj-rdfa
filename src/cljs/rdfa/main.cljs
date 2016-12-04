@@ -1,6 +1,5 @@
 (ns rdfa.main
-  (:require [rdfa.core :as core]
-            [rdfa.jsdom :as jsdom]
+  (:require [rdfa.core :refer [extract-rdfa]]
             [rdfa.repr :refer [print-result]]))
 
 (defn ^:export get-data
@@ -9,4 +8,4 @@
   ([doc]
    (let [document-element (.-documentElement doc)
          location (.-URL doc)]
-     (core/extract-rdfa :html document-element location))))
+     (extract-rdfa :html document-element location))))

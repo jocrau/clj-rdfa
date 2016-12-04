@@ -4,8 +4,9 @@
     [mount.core :as mount :refer-macros [defstate]]
     [clojure.tools.cli :refer [parse-opts]]
     [rdfa.configuration :refer [cli-options configuration]]
-    [rdfa.repr :refer [print-prefixes print-triples]]
+    [rdfa.repr :refer [print-result]]
     [rdfa.parser :refer [parse]]
+    #?(:cljs [rdfa.main])
     #?(:clj
     rdfa.parser.jsoup))
   #?(:clj
@@ -41,10 +42,6 @@
     :parse-fn #(#?(:clj URI. :cljs str) %)]
    ["-s" "--source STRING" "The source string."]])
 
-(defn exit [status msg]
-  (println msg)
-  (System/exit status))
-
 (defn ^:export -main [& args]
   (let [cli-options (:options (parse-opts args cli-args))]
     #?(:clj (.addShutdownHook (Runtime/getRuntime)
@@ -52,8 +49,7 @@
     (start (:options cli-options))
     (let [config @configuration]
       (when-let [source (or (:file cli-options) (:location cli-options) (:source cli-options))]
-        (let [{:keys [env triples proc-triples]} (parse source)
-              result (str (print-prefixes env)
-                          (print-triples triples)
-                          (print-triples proc-triples))]
-          (exit 0 result))))))
+        (let [result (print-result (parse source))]
+          #?(:clj (do (println result)
+                      (System/exit 0))
+             :cljs result))))))

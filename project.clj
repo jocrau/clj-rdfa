@@ -20,7 +20,7 @@
   :cljsbuild {:builds {:dev {:figwheel     true
                              :source-paths ["src/cljs" "src/cljc"]
                              :compiler     {:main                 rdfa.system
-                                            :asset-path           "js/target"
+                                            :asset-path           "public/js/target"
                                             :output-to            "resources/public/js/clj-rdfa.js"
                                             :output-dir           "resources/public/js/target"
                                             :optimizations        :none

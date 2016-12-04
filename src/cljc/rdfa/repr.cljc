@@ -42,3 +42,8 @@
                                 (print-prefix pfx iri))
                               prefix-map)))
        "\n"))
+
+(defn ^:export print-result [{:keys [env triples proc-triples]}]
+  (str (print-prefixes env)
+       (print-triples triples)
+       (print-triples proc-triples)))

@@ -1,8 +1,9 @@
 (ns rdfa.main
   (:require [rdfa.core :as core]
-            [rdfa.jsdom :as jsdom]))
+            [rdfa.jsdom :as jsdom]
+            [rdfa.repr :refer [print-result]]))
 
-(defn get-data
+(defn ^:export get-data
   ([]
    (get-data js/document))
   ([doc]

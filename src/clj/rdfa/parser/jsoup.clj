@@ -6,7 +6,8 @@
             [rdfa.core :refer [extract-rdfa error-results]]
             [rdfa.profiles :refer [detect-host-language]])
   (:import [org.jsoup Jsoup]
-           [org.jsoup.nodes Node Element]))
+           [org.jsoup.nodes Node Element]
+           [java.net URI]))
 
 (extend-type Node
   DomAccess
@@ -29,9 +30,20 @@
               :or   {location source
                      profile  (detect-host-language :location (str source))}}]
      (try
-       (let [root (if (iri-string? source)
-                    (.get (Jsoup/connect source))
-                    (Jsoup/parse source))]
+       (let [root (Jsoup/parse source location)]
+         (extract-rdfa profile root location))
+       (catch Exception e
+         (error-results (.getMessage e) "en"))))))
+
+(extend-type URI
+  Parser
+  (parse
+    ([source] (parse source {}))
+    ([source {:keys [profile location]
+              :or   {location source
+                     profile  (detect-host-language :location (str source))}}]
+     (try
+       (let [root (.get (Jsoup/connect (str source)))]
          (extract-rdfa profile root location))
        (catch Exception e
          (error-results (.getMessage e) "en"))))))

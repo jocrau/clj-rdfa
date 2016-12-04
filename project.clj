@@ -7,24 +7,30 @@
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.229"]
-                 [org.jsoup/jsoup "1.10.1"]]
+                 [org.clojure/tools.cli "0.3.5"]
+                 [com.taoensso/timbre "4.5.1"]
+                 [mount "0.1.10"]
+                 [environ "1.1.0"]
+                 [org.jsoup/jsoup "1.10.1"]
+                 [figwheel-sidecar "0.5.7"]]
   :profiles {:dev     {:plugins      [[lein-midje "3.2"]]
                        :dependencies [[midje "1.8.3"]]}
              :uberjar {:aot :all}}
   :plugins [[lein-cljsbuild "1.1.4"]]
-  :cljsbuild {:builds {:dev {:source-paths ["src/cljs" "src/cljc"]
-                             :compiler     {:main                 rdfa.cli
+  :cljsbuild {:builds {:dev {:figwheel     true
+                             :source-paths ["src/cljs" "src/cljc"]
+                             :compiler     {:main                 rdfa.system
                                             :asset-path           "js/target"
-                                            :output-to            "resources/public/js/main.js"
+                                            :output-to            "resources/public/js/clj-rdfa.js"
                                             :output-dir           "resources/public/js/target"
                                             :optimizations        :none
                                             :source-map-timestamp true
                                             :verbose              false
                                             :pretty-print         true}}}}
-
+  :figwheel {:open-file-command "open-in-intellij"}
   :repositories {"stuartsierra-releases" "http://stuartsierra.com/maven2"}
   :source-paths ["src/clj" "src/cljs" "src/cljc"]
   :clean-targets ^{:protect false} ["target" "resources/public/js/target" "resources/public/js/main.js"]
   :target-dir "target"
   :jar-exclusions [#"(?:^|/)\..+"]
-  :main rdfa.cli)
+  :main rdfa.system)

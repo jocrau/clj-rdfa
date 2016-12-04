@@ -38,11 +38,7 @@
    (start options)))
 
 (def cli-args
-  [["-p" "--parser PARSER" "The HTML parser (jsoup is currently the only option and therefore the default)."
-    :parse-fn keyword
-    :default :jsoup
-    :validate [#(some % [:jsoup]) "'jsoup' is the only option at the moment."]]
-   ["-l" "--location URL" "The url to source from."
+  [["-l" "--location URL" "The url to source from."
     :parse-fn #(#?(:clj slurp :cljs str) %)]
    ["-s" "--source STRING" "The source string."]])
 

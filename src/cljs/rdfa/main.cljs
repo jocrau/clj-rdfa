@@ -4,6 +4,8 @@
     [rdfa.repr :refer [print-result]]
     [goog.string :as gstring]))
 
+(enable-console-print!)
+
 (defn ^:export get-data
   ([]
    (get-data js/document))
@@ -17,3 +19,6 @@
         data (get-data)]
     (aset element "innerHTML" (gstring/htmlEscape (print-result data)))
     nil))
+
+(defn ^:export reload-rdfa []
+  (render-rdfa "rdf-container"))

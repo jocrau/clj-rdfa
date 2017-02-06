@@ -6,13 +6,10 @@
     [rdfa.configuration :refer [cli-options configuration]]
     [rdfa.repr :refer [print-result]]
     [rdfa.parser :refer [parse]]
-    #?(:cljs [rdfa.main])
-    #?(:clj
-    rdfa.dom.w3c
-       :cljs
-       rdfa.dom.google)
-    #?(:clj
-    rdfa.parser.jsoup))
+    #?(:cljs rdfa.main)
+    #?(:clj rdfa.dom.w3c)
+    #?(:cljs rdfa.dom.google)
+    #?(:clj rdfa.parser.jsoup))
   #?(:clj
      (:gen-class))
   #?(:clj
@@ -50,5 +47,5 @@
     (when-let [source (or (:file parsed-args) (:location parsed-args) (:source parsed-args))]
       (let [result (print-result (parse source))]
         #?(:clj  (do (println result)
-                      (System/exit 0))
+                     (System/exit 0))
            :cljs result)))))

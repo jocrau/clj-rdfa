@@ -6,8 +6,6 @@
 
 (def cli-options (atom {}))
 
-(def parse-long #(Long/parseLong %))
-
 (def environment-mapping
   {:rdfa-html-parser {:path [:html :parser]}})
 

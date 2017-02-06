@@ -1,6 +1,5 @@
 (ns rdfa.dom.w3c
-  (:require clojure.string)
-  (:require (rdfa dom))
+  (:require [rdfa.dom :refer :all])
   (:import [org.w3c.dom Node]))
 
 
@@ -10,7 +9,7 @@
       (recur (dec index) (cons (.item nl index) nodes)))))
 
 (extend-type Node
-  rdfa.dom/DomAccess
+  DomAccess
   (get-name [this]
     (.getNodeName this))
   (get-attr [this attr-name]

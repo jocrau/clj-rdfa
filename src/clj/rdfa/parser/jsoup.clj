@@ -32,7 +32,6 @@
                      profile  (detect-host-language :location (str source))}}]
      (try
        (let [root (Jsoup/parse source location)]
-         (println source)
          (extract-rdfa profile root location))
        (catch Exception e
          (error-results (.getMessage e) "en"))))))

@@ -23,7 +23,6 @@
 (extend-type js/Node
   rdfa.dom/DomAccess
   (get-name [this] (.-nodeName this))
-  (set-attr [this attr-name value] (.setAttribute this attr-name value))
   (get-attr [this attr-name] (if (and (.-hasAttribute this)
                                       (.hasAttribute this attr-name))
                                (.getAttribute this attr-name)))

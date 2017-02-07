@@ -1,27 +1,12 @@
 (ns rdfa.parser.jsoup
   (:require
-    [rdfa.dom :refer :all]
     [rdfa.parser :refer :all]
     [clojure.string :refer [join split]]
-    [rdfa.core :refer [extract-rdfa error-results]]
+    [rdfa.extractor :refer [extract error-results]]
     [rdfa.profiles :refer [detect-host-language]])
   (:import
     [org.jsoup Jsoup]
-    [org.jsoup.nodes Node Element]
     [java.net URI]))
-
-(extend-type Node
-  DomAccess
-  (get-name [this] (.nodeName this))
-  (get-attr [this attr-name] (when (.hasAttr this attr-name) (.attr this attr-name)))
-  (get-ns-map [this]
-    (into {} (map #(when (.startsWith (.getKey %) "xmlns:")
-                    [(.substring (.getKey %) 6) (.getValue %)])
-                  (.attributes this))))
-  (is-root? [this] (= (.ownerDocument this) this))
-  (find-by-tag [this tag] (.getElementsByTag this tag))
-  (get-child-elements [this] (filter #(= (type %) Element) (.children this)))
-  (get-text [this] (.text this)))
 
 (extend-type String
   Parser
@@ -29,10 +14,10 @@
     ([source] (parse source {}))
     ([source {:keys [profile location]
               :or   {location ""
-                     profile  (detect-host-language :location (str source))}}]
+                     profile  (detect-host-language :location (str source))}
+              :as   options}]
      (try
-       (let [root (Jsoup/parse source location)]
-         (extract-rdfa profile root location))
+       (Jsoup/parse source location)
        (catch Exception e
          (error-results (.getMessage e) "en"))))))
 
@@ -41,10 +26,10 @@
   (parse
     ([source] (parse source {}))
     ([source {:keys [profile location]
-              :or   {location source
-                     profile  (detect-host-language :location (str source))}}]
+              :or   {location (str source)
+                     profile  (detect-host-language :location (str source))}
+              :as   options}]
      (try
-       (let [root (.get (Jsoup/connect (str source)))]
-         (extract-rdfa profile root location))
+       (.get (Jsoup/connect (str source)))
        (catch Exception e
          (error-results (.getMessage e) "en"))))))

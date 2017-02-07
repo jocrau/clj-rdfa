@@ -1,5 +1,5 @@
-(ns rdfa.utils
-  (:require [goog.Uri :as uri]))
+(ns rdfa.iri
+  (:require [goog.Uri]))
 
 ;; This is just a quick fix for a bug in goog.Uri: The problem is, 
 ;; that goog.Uri escapes characters of a path. But that should not 

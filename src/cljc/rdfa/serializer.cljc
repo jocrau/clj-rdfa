@@ -1,10 +1,10 @@
-(ns rdfa.repr
+(ns rdfa.serializer
   (:require
-    rdfa.core
-    #?(:cljs [rdfa.core :refer [IRI Literal BNode]])
+    #?(:cljs [rdfa.extractor :refer [IRI Literal BNode]])
     [clojure.string :as string])
   #?(:clj
-     (:import [rdfa.core IRI Literal BNode])))
+     (:import
+       [rdfa.extractor IRI Literal BNode])))
 
 (defn repr-term [term]
   (condp = (type term)
@@ -43,7 +43,7 @@
                               prefix-map)))
        "\n"))
 
-(defn ^:export print-result [{:keys [env triples proc-triples]}]
+(defn ^:export serialize [{:keys [env triples proc-triples]}]
   (str (print-prefixes env)
        (print-triples triples)
        (print-triples proc-triples)))

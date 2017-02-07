@@ -1,4 +1,4 @@
-(ns rdfa.utils
+(ns rdfa.iri
   (:import [java.net URI]))
 
 (defn resolve-iri [iref base]

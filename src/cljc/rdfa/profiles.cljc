@@ -1,7 +1,6 @@
 (ns rdfa.profiles
   (:require [rdfa.dom :as dom]))
 
-
 (let [xsd "http://www.w3.org/2001/XMLSchema#"]
   (def xsd:date (str xsd "date"))
   (def xsd:time (str xsd "time"))

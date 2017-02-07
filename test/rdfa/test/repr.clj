@@ -1,6 +1,6 @@
 (ns rdfa.test.repr
   (:use midje.sweet
-        rdfa.repr)
+        rdfa.serializer)
   (:import [rdfa.core IRI Literal BNode]))
 
 

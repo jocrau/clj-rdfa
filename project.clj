@@ -17,7 +17,7 @@
                        :dependencies [[midje "1.8.3"]]}
              :uberjar {:aot :all}}
   :plugins [[lein-cljsbuild "1.1.4"]]
-  :cljsbuild {:builds {:dev {:figwheel     {:on-jsload "rdfa.main/reload-rdfa"}
+  :cljsbuild {:builds {:dev {:figwheel     {:on-jsload "rdfa.ui/init-ui"}
                              :source-paths ["src/cljs" "src/cljc"]
                              :compiler     {:main                 rdfa.system
                                             :asset-path           "public/js/target"

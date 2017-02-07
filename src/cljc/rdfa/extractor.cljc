@@ -1,8 +1,8 @@
-(ns rdfa.core
+(ns rdfa.extractor
   (:require [clojure.string :as string]
-            [rdfa.dom :as dom]
-            [rdfa.profiles :as profiles]
-            [rdfa.utils :refer [resolve-iri]]))
+            [rdfa.dom :as dom :refer [DomAccess]]
+            [rdfa.profiles :refer [detect-host-language extended-data get-host-env]]
+            [rdfa.iri :refer [resolve-iri]]))
 
 (defrecord BNode [id])
 (defrecord IRI [id])
@@ -15,7 +15,6 @@
 (defn next-bnode []
   (BNode. (str gen-bnode-prefix
                (swap! bnode-counter inc))))
-
 
 (let [rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#"]
   (def rdf:type (IRI. (str rdf "type")))
@@ -228,7 +227,7 @@
        [props rels revs nil]) errs]))
 
 (defn parse-element [parent-env el]
-  (let [data (profiles/extended-data parent-env (get-data el))
+  (let [data (extended-data parent-env (get-data el))
         env (update-mappings parent-env data)
         [subject s-err] (get-subject env data)
         [[props rels revs list-ps]
@@ -372,9 +371,15 @@
      :triples (concat triples child-triples list-triples)
      :proc-triples (concat proc-triples child-proc-triples)}))
 
-(defn extract-rdfa [profile root location]
-  (let [base-env (init-env location (profiles/get-host-env profile root))]
-    (visit-element base-env root)))
+(defn extract
+  ([root] (extract root {}))
+  ([root {:keys [profile location]
+          :or   {location ""
+                 profile  (detect-host-language :location "")}
+          :as   options}]
+  (assert (satisfies? DomAccess root) "The root element must implement DomAccess protocol.")
+  (let [base-env (init-env location (get-host-env profile root))]
+    (visit-element base-env root))))
 
 (defn error-results [err-msg lang]
   (let [err-node (next-bnode)

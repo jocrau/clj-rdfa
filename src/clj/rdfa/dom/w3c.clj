@@ -2,7 +2,6 @@
   (:require [rdfa.dom :refer :all])
   (:import [org.w3c.dom Node]))
 
-
 (defn node-list [nl]
   (loop [index (dec (.getLength nl)) nodes nil]
     (if (= index -1) nodes

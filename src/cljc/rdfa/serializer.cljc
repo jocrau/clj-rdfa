@@ -43,7 +43,7 @@
                               prefix-map)))
        "\n"))
 
-(defn ^:export serialize [{:keys [env triples proc-triples]}]
+(defn ^:export serialize [{:keys [env triples proc-triples]} context]
   (str (print-prefixes env)
        (print-triples triples)
        (print-triples proc-triples)))

@@ -1,8 +1,9 @@
 (ns rdfa.extractor
-  (:require [clojure.string :as string]
-            [rdfa.dom :as dom :refer [DomAccess]]
-            [rdfa.profiles :refer [detect-host-language extended-data get-host-env]]
-            [rdfa.iri :refer [resolve-iri]]))
+  (:require
+    [clojure.string :as string]
+    [rdfa.dom :as dom :refer [DomAccess]]
+    [rdfa.profiles :refer [detect-host-language extended-data get-host-env]]
+    [rdfa.iri :refer [resolve-iri]]))
 
 (defrecord BNode [id])
 (defrecord IRI [id])
@@ -91,52 +92,52 @@
 
 (defn parse-prefix [prefix]
   (if (empty? prefix) nil
-    (let [initial (apply hash-map
-                         (string/split (string/trim prefix) #":?\s+"))
-          valid-prefix? #(re-matches #"^[\w_][\w_\-\.]*$" %1)]
-      (select-keys initial (filter valid-prefix? (keys initial))))))
+                      (let [initial (apply hash-map
+                                           (string/split (string/trim prefix) #":?\s+"))
+                            valid-prefix? #(re-matches #"^[\w_][\w_\-\.]*$" %1)]
+                        (select-keys initial (filter valid-prefix? (keys initial))))))
 
 (defn init-env
   [location {prefix-map :prefix-map
-             term-map :term-map
-             vocab :vocab
-             base :base
-             profile :profile}]
+             term-map   :term-map
+             vocab      :vocab
+             base       :base
+             profile    :profile}]
   (let [base (or base location)
         base (let [i (.indexOf base "#")] (if (> i -1) (subs base 0 i) base))]
-    {:profile profile
-     :base base
-     :parent-object (IRI. base)
-     :incomplete {}
+    {:profile            profile
+     :base               base
+     :parent-object      (IRI. base)
+     :incomplete         {}
      :incomplete-subject nil
-     :list-map {}
-     :lang nil
-     :xmlns-map nil
-     :prefix-map prefix-map
-     :term-map term-map
-     :vocab vocab}))
+     :list-map           {}
+     :lang               nil
+     :xmlns-map          nil
+     :prefix-map         prefix-map
+     :term-map           term-map
+     :vocab              vocab}))
 
 (defn get-data [el]
   (let [attr #(dom/get-attr el %1)
         xmlns-map (dom/get-ns-map el)
         prefix-map (parse-prefix (attr "prefix"))]
-    {:element el
-     :is-root (dom/is-root? el)
-     :xmlns-map (if-let [xmlns (attr "xmlns")]
-                  (assoc xmlns-map nil xmlns) xmlns-map)
+    {:element    el
+     :is-root    (dom/is-root? el)
+     :xmlns-map  (if-let [xmlns (attr "xmlns")]
+                   (assoc xmlns-map nil xmlns) xmlns-map)
      :prefix-map (merge xmlns-map prefix-map)
-     :vocab (attr "vocab")
-     :base nil
-     :about (attr "about")
-     :property (attr "property")
-     :rel (attr "rel")
-     :rev (attr "rev")
-     :resources (remove nil? [(attr "resource") (attr "href") (attr "src")])
-     :typeof (attr "typeof")
-     :inlist (attr "inlist")
-     :lang (or (attr "xml:lang") (attr "lang"))
-     :content (attr "content")
-     :datatype (attr "datatype")}))
+     :vocab      (attr "vocab")
+     :base       nil
+     :about      (attr "about")
+     :property   (attr "property")
+     :rel        (attr "rel")
+     :rev        (attr "rev")
+     :resources  (remove nil? [(attr "resource") (attr "href") (attr "src")])
+     :typeof     (attr "typeof")
+     :inlist     (attr "inlist")
+     :lang       (or (attr "xml:lang") (attr "lang"))
+     :content    (attr "content")
+     :datatype   (attr "datatype")}))
 
 (defn update-mappings [env data]
   (let [env (if-let [base (data :base)]
@@ -151,7 +152,7 @@
                        #(merge %1 (data :prefix-map)))
         env (if-let [vocab (data :vocab)]
               (assoc env :vocab (if (empty? vocab) nil
-                                  (resolve-iri vocab (env :base))))
+                                                   (resolve-iri vocab (env :base))))
               env)]
     env))
 
@@ -283,9 +284,9 @@
                             (for [p props] [active-s p o-literal]))
                           (if o-resource
                             (concat (for [p (if o-literal rels
-                                                (concat props rels))]
-                                        [active-s p o-resource])
-                                      (for [p revs] [o-resource p active-s]))))
+                                                          (concat props rels))]
+                                      [active-s p o-resource])
+                                    (for [p revs] [o-resource p active-s]))))
         type-triples (let [ts (if (or has-about (not o-resource))
                                 active-s o-resource)]
                        (for [t types] [ts rdf:type t]))
@@ -303,17 +304,17 @@
                           (not-empty completed-triples) {}
                           :else incomplete)
         env (assoc env
-                   :incomplete next-incomplete
-                   :incomplete-subject next-incomplete-s
-                   :parent-object next-parent-o
-                   :list-map new-list-map)
+              :incomplete next-incomplete
+              :incomplete-subject next-incomplete-s
+              :parent-object next-parent-o
+              :list-map new-list-map)
         env (if (not= parent-o next-parent-o)
               (assoc-in env [:incomplete :list-ps] {})
               env)]
     [env data (concat type-triples
-                        completed-triples
-                        regular-triples
-                        vocab-triples) proc-triples]))
+                      completed-triples
+                      regular-triples
+                      vocab-triples) proc-triples]))
 
 (defn gen-list-triples [s p l]
   (loop [s s, p p, l l, triples nil]
@@ -331,8 +332,8 @@
                                prev-triples
                                prev-proc-triples] child]
   (let [{{list-map :list-map} :env
-         triples :triples
-         proc-triples :proc-triples} (visit-element prev-env child)]
+         triples              :triples
+         proc-triples         :proc-triples} (visit-element prev-env child)]
     [(if (empty? list-map)
        prev-env
        (assoc prev-env :list-map list-map))
@@ -349,9 +350,9 @@
                                      (parent-env :list-map)
                                      (if has-about {} new-list-map))
         local-env (assoc env :list-map
-                         (if changed-s
-                           (if has-about new-list-map {})
-                           current-list-map))
+                             (if changed-s
+                               (if has-about new-list-map {})
+                               current-list-map))
         [{combined-list-map :list-map}
          child-triples
          child-proc-triples] (reduce
@@ -363,29 +364,26 @@
                                             (not (contains? current-list-map p)))]
                               (gen-list-triples s p l)))
         result-env (assoc env :list-map
-                          (cond
-                            changed-s current-list-map
-                            (empty? list-triples) combined-list-map
-                            :else current-list-map))]
-    {:env result-env
-     :triples (concat triples child-triples list-triples)
+                              (cond
+                                changed-s current-list-map
+                                (empty? list-triples) combined-list-map
+                                :else current-list-map))]
+    {:env          result-env
+     :triples      (concat triples child-triples list-triples)
      :proc-triples (concat proc-triples child-proc-triples)}))
-
-(defn extract
-  ([root] (extract root {}))
-  ([root {:keys [profile location]
-          :or   {location ""
-                 profile  (detect-host-language :location "")}
-          :as   options}]
-  (assert (satisfies? DomAccess root) "The root element must implement DomAccess protocol.")
-  (let [base-env (init-env location (get-host-env profile root))]
-    (visit-element base-env root))))
 
 (defn error-results [err-msg lang]
   (let [err-node (next-bnode)
         descr (Literal. err-msg lang)]
-    {:env nil
-     :triples nil
+    {:env          nil
+     :triples      nil
      :proc-triples [[err-node rdf:type rdfa:Error]
                     [err-node dc:description descr]]}))
 
+(defn extract [root context]
+  (try
+    (assert (satisfies? DomAccess root) "The root element must implement DomAccess protocol.")
+    (let [base-env (init-env (:location context) (get-host-env (:host-language context) root))]
+      (visit-element base-env root))
+    (catch #?(:clj Exception :cljs js/Error) e
+      (error-results (.getMessage e) "en"))))

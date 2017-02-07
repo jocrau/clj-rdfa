@@ -90,13 +90,12 @@
    :html xhtml-context})
 
 
-(defn detect-host-language [&{:keys [location mime-type doctype xmlns]}]
+(defn detect-host-language [location source]
   ; TODO: add support for the other options
   (cond
-    (.endsWith location ".html") :html
-    (.endsWith location ".xhtml") :xhtml
+    (and (string? location) (.endsWith location ".html")) :html
+    (and (string? location) (.endsWith location ".xhtml")) :xhtml
     :else :xml))
-
 
 ; TODO: vary these functions by profile (a lot only applies to (x)html)
 

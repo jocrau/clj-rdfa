@@ -9,17 +9,15 @@
                  [org.clojure/clojurescript "1.9.229"]
                  [org.clojure/tools.cli "0.3.5"]
                  [com.taoensso/timbre "4.5.1"]
-                 [mount "0.1.10"]
-                 [environ "1.1.0"]
                  [org.jsoup/jsoup "1.10.1"]
                  [figwheel-sidecar "0.5.7"]]
   :profiles {:dev     {:plugins      [[lein-midje "3.2"]]
                        :dependencies [[midje "1.8.3"]]}
              :uberjar {:aot :all}}
   :plugins [[lein-cljsbuild "1.1.4"]]
-  :cljsbuild {:builds {:dev {:figwheel     {:on-jsload "rdfa.ui/init-ui"}
+  :cljsbuild {:builds {:dev {:figwheel     {:on-jsload "rdfa.api/init"}
                              :source-paths ["src/cljs" "src/cljc"]
-                             :compiler     {:main                 rdfa.system
+                             :compiler     {:main                 rdfa.api
                                             :asset-path           "public/js/target"
                                             :output-to            "resources/public/js/clj-rdfa.js"
                                             :output-dir           "resources/public/js/target"
@@ -27,10 +25,11 @@
                                             :source-map-timestamp true
                                             :verbose              false
                                             :pretty-print         true}}}}
-  :figwheel {:open-file-command "open-in-intellij"}
+  :figwheel {:open-file-command "open-in-intellij"
+             :server-port       3450}
   :repositories {"stuartsierra-releases" "http://stuartsierra.com/maven2"}
   :source-paths ["src/clj" "src/cljs" "src/cljc"]
   :clean-targets ^{:protect false} ["target" "resources/public/js/target" "resources/public/js/cls-rdfa.js"]
   :target-dir "target"
   :jar-exclusions [#"(?:^|/)\..+"]
-  :main rdfa.system)
+  :main rdfa.api)

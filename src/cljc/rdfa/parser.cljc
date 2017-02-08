@@ -1,9 +1,6 @@
 (ns rdfa.parser
-  (:require
-    [taoensso.timbre :refer [log trace debug info warn error fatal report]]
-    [rdfa.profiles :refer [detect-host-language]]))
+  (:require [taoensso.timbre :refer [warn]]))
 
 (defmulti parse (fn [source context] (:host-language context)))
 
-(defmethod parse nil [source context]
-  (warn "No parser found"))
+(defmethod parse nil [source context] (warn "No parser found"))

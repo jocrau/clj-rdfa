@@ -1,7 +1,8 @@
 (ns rdfa.dom.google
-  (:require [clojure.string :as string]
-            [goog.dom :as gdom]
-            [rdfa.dom :as dom]))
+  (:require
+    [clojure.string :as string]
+    [goog.dom :as gdom]
+    [rdfa.dom :as dom]))
 
 (defn- node-list [nl]
   (if-not (nil? nl)

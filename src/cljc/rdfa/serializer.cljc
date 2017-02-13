@@ -1,10 +1,10 @@
 (ns rdfa.serializer
   (:require
-    #?(:cljs [rdfa.extractor :refer [IRI Literal BNode]])
+    #?(:cljs [rdfa.rdf :refer [IRI Literal BNode]])
     [clojure.string :as string])
   #?(:clj
      (:import
-       [rdfa.extractor IRI Literal BNode])))
+       [rdfa.rdf IRI Literal BNode])))
 
 (defn repr-term [term]
   (condp = (type term)

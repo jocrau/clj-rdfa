@@ -2,12 +2,15 @@
   (:require
     [clojure.string :as string]
     [rdfa.dom :as dom :refer [DomAccess]]
+    #?(:clj
+    [rdfa.dom.jsoup])
+    #?(:cljs [rdfa.dom.google])
+    #?(:cljs [rdfa.rdf :refer [IRI BNode Literal]])
     [rdfa.profiles :refer [detect-host-language extended-data get-host-env]]
-    [rdfa.iri :refer [resolve-iri]]))
-
-(defrecord BNode [id])
-(defrecord IRI [id])
-(defrecord Literal [value tag])
+    [rdfa.iri :refer [resolve-iri]])
+  #?(:clj
+     (:import
+       [rdfa.rdf IRI BNode Literal])))
 
 (def gen-bnode-prefix "GEN")
 
@@ -386,4 +389,4 @@
     (let [base-env (init-env (:location context) (get-host-env (:host-language context) root))]
       (visit-element base-env root))
     (catch #?(:clj Exception :cljs js/Error) e
-      (error-results (.getMessage e) "en"))))
+      (error-results #?(:clj (.getMessage e) :cljs (aget e "message")) "en"))))

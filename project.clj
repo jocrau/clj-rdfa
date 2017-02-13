@@ -14,10 +14,8 @@
                  [org.clojure/tools.cli "0.3.5"]
                  [com.taoensso/timbre "4.5.1"]
                  [org.jsoup/jsoup "1.10.1"]]
-  :profiles {:dev     {:plugins      [[lein-figwheel "0.5.9" :exclusions [org.clojure/clojure]]
-                                      [lein-midje "3.2"]]
-                       :dependencies [[figwheel-sidecar "0.5.9"]
-                                      [midje "1.8.3"]]}
+  :profiles {:dev     {:plugins      [[lein-figwheel "0.5.9" :exclusions [org.clojure/clojure]]]
+                       :dependencies [[figwheel-sidecar "0.5.9"]]}
              :uberjar {:main rdfa.api
                        :aot  :all}}
 

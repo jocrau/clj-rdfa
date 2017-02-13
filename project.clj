@@ -9,15 +9,15 @@
   :clean-targets ^{:protect false} ["target" "resources/public/js/target" "resources/public/js/cls-rdfa.js"]
 
   :repositories {"stuartsierra-releases" "http://stuartsierra.com/maven2"}
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.229"]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
+                 [org.clojure/clojurescript "1.9.293"]
                  [org.clojure/tools.cli "0.3.5"]
                  [com.taoensso/timbre "4.5.1"]
                  [org.jsoup/jsoup "1.10.1"]]
-  :profiles {:dev     {:plugins      [[lein-cljsbuild "1.1.4"]
-                                      [figwheel-sidecar "0.5.7"]
+  :profiles {:dev     {:plugins      [[lein-figwheel "0.5.9" :exclusions [org.clojure/clojure]]
                                       [lein-midje "3.2"]]
-                       :dependencies [[midje "1.8.3"]]}
+                       :dependencies [[figwheel-sidecar "0.5.9"]
+                                      [midje "1.8.3"]]}
              :uberjar {:main rdfa.api
                        :aot  :all}}
 

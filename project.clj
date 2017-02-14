@@ -14,12 +14,12 @@
                  [org.clojure/tools.cli "0.3.5"]
                  [com.taoensso/timbre "4.5.1"]
                  [org.jsoup/jsoup "1.10.1"]
-                 [hickory "0.7.0" :exclusions [org.jsoup/jsoup]]]
+                 [hickory "0.7.0" :exclusions [org.jsoup/jsoup]]
+                 [datascript "0.15.5"]]
   :profiles {:dev     {:plugins      [[lein-figwheel "0.5.9" :exclusions [org.clojure/clojure]]]
                        :dependencies [[figwheel-sidecar "0.5.9"]]}
              :uberjar {:main rdfa.api
                        :aot  :all}}
-
   :cljsbuild {:builds {:dev {:figwheel     {:on-jsload "rdfa.api/init"}
                              :source-paths ["src/cljs" "src/cljc"]
                              :compiler     {:main                 rdfa.api
@@ -31,6 +31,7 @@
                                             :verbose              false
                                             :pretty-print         true}}}}
 
+  :repl-options {:init-ns rdfa.api}
   :target-dir "target"
   :jar-exclusions [#"(?:^|/)\..+"]
   :min-lein-version "2.0.0")

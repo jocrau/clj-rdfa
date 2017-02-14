@@ -1,6 +1,5 @@
 <html lang="en">
   <head>
-    <base href="http://example.org/2012/example" />
     <title></title>
   </head>
   <body vocab="http://purl.org/dc/terms/">
@@ -19,5 +18,8 @@
     </span>
     <p property="rdf:value" inlist="">Baz</p>
     <p property="rdf:value " inlist="" resource="boo">Boo</p>
+    <pre id="rdf-container"></pre>
   </body>
+  <script type="text/javascript" src="public/js/clj-rdfa.js"></script>
+  <script type="text/javascript">rdfa.api.init();</script>
 </html>

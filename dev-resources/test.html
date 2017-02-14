@@ -8,8 +8,8 @@
       lang="en">
   <head prefix="bibo: http://purl.org/ontology/bibo/"
         about="" typeof="foaf:Document bibo:Document">
-    <base href="http://example.org/2011/example" />
     <title>Site: The Document</title>
+    <base href="../resources/" />
     <meta property="dct:subject" content="keywords" />
   </head>
   <body lang="en-GB" vocab="http://purl.org/dc/terms/">
@@ -49,5 +49,10 @@
       </p>
       <a rel="license" href="/cc-by">CC-BY</a>
     </footer>
+
+    <pre id="rdf-container"></pre>
+
   </body>
+  <script type="text/javascript" src="public/js/clj-rdfa.js"></script>
+  <script type="text/javascript">rdfa.api.init();</script>
 </html>

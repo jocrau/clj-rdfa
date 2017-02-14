@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.1//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" version="XHTML+RDFa 1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/1999/xhtml http://www.w3.org/MarkUp/SCHEMA/xhtml-rdfa-2.xsd" lang="en" xml:lang="en" typeof="http://xmlns.com/foaf/0.1/Document">
+<head>
+    <meta charset="UTF-8" />
+    <base href="../resources/" />
+    <title property="rdfs:label">Recipes Template</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap-responsive.min.css" type="text/css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.1/themes/smoothness/jquery-ui.css" type="text/css" />
+    <style>
+
+        .navbar-fixed-top {
+	margin-bottom: 20px;
+	position: static;
+}
+
+.footer {
+  margin-top: 45px;
+  padding: 35px 0 36px;
+  border-top: 1px solid #e5e5e5;
+}
+.footer p {
+  margin-bottom: 0;
+  color: #555;
+}
+
+.span9 *[rel~="schema:image"] {
+	max-width: 40%;
+	max-height: 200px;
+	margin: 10px;
+}
+
+.span3 *[rel~="http://xmlns.com/foaf/0.1/depiction"] {
+	max-width: 100%;
+	max-height: 200px;
+	margin: 0px;
+}
+
+.media img {
+	max-width: 100px;
+	max-height: 100px;
+}
+
+
+.highlight {
+	background-color: #a5dca3;
+}
+
+.highlight[typeof~="http://bakepedia.org/ontology#Step"] {
+	background-color: #d5d6ff;
+}
+
+*[typeof~="schema:VideoObject"], *[typeof~="http://www.w3.org/ns/ma-ont#MediaResource"]  {
+	position: relative;
+}
+
+    </style>
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="#">Bake</a>
+            <ul class="nav">
+                <li><a href="recipes">Recipes</a></li>
+                <li><a href="ingredients">Ingredients</a></li>
+                <li><a href="manuals">Manuals</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="span12">
+
+        <div rel="http://knowl-edge.org/ontology/core#contains">
+            <div about="http://bakeopedia.org/recipe/moms-world-famous-banana-bread" typeof="schema:Recipe">
+
+                <h2 property="schema:name">Mom's World Famous Banana Bread</h2>
+
+                <p>By <span rel="schema:creator">
+						<span about="http://dbpedia.org/resource/Peter_Pan" typeof="foaf:Person"><span property="foaf:name rdfs:label">Peter Pan</span></span></span>,
+                    <span property="schema:datePublished" content="2009-05-08">May 8, 2009</span>
+                </p>
+
+                <div class="row">
+                    <div class="span6">
+
+                        <p><img rel="schema:image" src="http://placehold.it/300x200" class="img-polaroid"/></p>
+
+                        <div rel="schema:video">
+                            <div about="http://example.com/foo/sdafsdf" typeof="http://www.w3.org/ns/ma-ont#MediaResource schema:VideoObject">
+                                <iframe id="player" rel="http://www.w3.org/ns/ma-ont#locator" src="https://www.youtube.com/embed/xyz?enablejsapi=1&origin=http://localhost:8080/" width="100%" height="315" frameborder="0" wmode="transparent" allowfullscreen class="img-polaroid"></iframe>
+                                <div rel="http://www.w3.org/ns/ma-ont#hasFragment">
+                                    <div about="http://example.com/foo/1212123dsfasdffd" typeof="http://knowl-edge.org/ontology/core#TemporalFragment">
+                                        <div rel="schema:mentions"><div about="http://example.com/something" typeof="http://bakepedia.org/ontology#Component http://bakepedia.org/ontology#Step http://www.w3.org/2002/07/owl#Thing http://dbpedia.org/class/yago/KitchenwareBrands"></div></div>
+                                        <div property="http://knowl-edge.org/ontology/core#start"></div>
+                                        <div property="http://knowl-edge.org/ontology/core#end"></div>
+                                    </div>
+                                    <div about="http://example.com/foo/12156476745dfgdfg" typeof="http://knowl-edge.org/ontology/core#SpatialFragment">
+                                        <div rel="schema:mentions"><div about="http://example.com/somethingelse" typeof="http://bakepedia.org/ontology#Guide http://bakepedia.org/ontology#Ingredient http://bakepedia.org/ontology#Appliance http://purl.org/goodrelations/v1#Offering"></div></div>
+                                        <div property="http://knowl-edge.org/ontology/core#start"></div>
+                                        <div property="http://knowl-edge.org/ontology/core#end"></div>
+                                        <div property="http://knowl-edge.org/ontology/core#top"></div>
+                                        <div property="http://knowl-edge.org/ontology/core#left"></div>
+                                        <div property="http://knowl-edge.org/ontology/core#width"></div>
+                                        <div property="http://knowl-edge.org/ontology/core#height"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="span6">
+
+                        <h4>Ingredients</h4>
+                        <ul inlist="" rel="http://bakepedia.org/ontology#components">
+                            <li about="http://bakepedia.org/resource/12343422" typeof="http://bakepedia.org/ontology#Component">
+                                <span property="http://bakepedia.org/ontology#quantity">2 or 3</span>
+                                <span property="http://bakepedia.org/ontology#preCondition"> </span>
+                                <span rel="http://bakepedia.org/ontology#ingredient">
+										<span typeof="http://bakepedia.org/ontology#Ingredient">
+											<span property="http://bakepedia.org/ontology#name">Bananas</span>
+											<span rel="rdfs:seeAlso" style="display: none;">
+												<span typeof="http://dbpedia.org/class/yago/LeaveningAgents
+															http://dbpedia.org/class/yago/Cereals
+															http://dbpedia.org/class/yago/FoodAdditives
+															rdfs:Resource
+															http://www.w3.org/2002/07/owl#Thing">
+													<img rel="http://dbpedia.org/ontology/thumbnail schema:image http://xmlns.com/foaf/0.1/depiction" src="http://placehold.it/300x200" class="img-polaroid pull-right"/>
+													<span property="rdfs:comment"> </span>
+													<a rel="http://xmlns.com/foaf/0.1/isPrimaryTopicOf http://knowl-edge.org/ontology/core#externalLink http://dbpedia.org/ontology/wikiPageExternalLink" href="#" class="btn btn-small pull-right">Buy Online</a>
+												</span>
+											</span>
+										</span>
+									</span>
+                                <span property="http://bakepedia.org/ontology#comment"> </span>
+                            </li>
+                        </ul>
+
+                        <h4>Preparation</h4>
+
+                        <p property="schema:recipeInstructions">
+                            Preheat the oven to 350 degrees. Mix in the ingredients in a bowl. Add
+                            the flour last. Pour the mixture into a loaf pan and bake for one hour.
+                        </p>
+
+                    </div>
+                </div>
+                <div class="well well-small row">
+                    <div class="span3">
+                        <h4>Nutritional Information</h4>
+
+                        <p>1 serving contains</p>
+
+                        <div rel="schema:nutrition">
+                            <div typeof="schema:NutritionInformation">
+                                <div>Calories <span property="schema:calories">42</span>kcal</div>
+                                <div>Fat <span property="schema:fatContent">42</span>g</div>
+                                <div>Saturated Fat <span property="schema:saturatedFatContent">42</span>g</div>
+                                <div>Cholesterol <span property="schema:cholesterolContent">42</span>mg</div>
+                                <div>Carbohydrates <span property="schema:carbohydrateContent">42</span>g</div>
+                                <div>Dietary Fiber <span property="schema:fiberContent">42</span>g</div>
+                                <div>Total Sugars <span property="schema:sugarContent">42</span>g</div>
+                                <div>Protein <span property="schema:proteinContent">42</span>g</div>
+                                <div>Sodium <span property="schema:sodiumContent">42</span>mg</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span3">
+                        <h4>Ratings</h4>
+
+                        <p property="schema:aggregateRating" typeof="schema:AggregateRating">
+                            <span property="schema:ratingValue">4</span> stars - based on <span property="schema:reviewCount">250</span> reviews
+                        </p>
+                    </div>
+                    <div class="span3">
+                        <h4>More Information</h4>
+
+                        <p>
+                            Prep Time: <span property="schema:prepTime" content="PT15M">15 minutes</span><br />
+                            Total time: <span property="schema:totalTime" content="PT3H">3 hour</span><br/>
+                            Yield: <span property="schema:recipeYield">1 loaf</span>
+                        </p>
+
+                        <p><a rel="http://knowl-edge.org/ontology/core#externalLink" href="#">Read More</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<pre id="rdf-container"></pre>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/ui/1.9.1/jquery-ui.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="public/js/clj-rdfa.js"></script>
+<script type="text/javascript">rdfa.api.init();</script>
+
+</body>
+</html>

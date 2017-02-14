@@ -6,3 +6,4 @@
 .lein-repl-history
 application.js
 main.js
+!/test/rdfa/test/repr.cljc

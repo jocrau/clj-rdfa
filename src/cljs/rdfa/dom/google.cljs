@@ -1,7 +1,8 @@
-(ns rdfa.jsdom
-  (:require [clojure.string :as string]
-            [goog.dom :as gdom]
-            [rdfa.dom :as dom]))
+(ns rdfa.dom.google
+  (:require
+    [clojure.string :as string]
+    [goog.dom :as gdom]
+    [rdfa.dom :as dom]))
 
 (defn- node-list [nl]
   (if-not (nil? nl)
@@ -15,10 +16,14 @@
          (try (.-xml node)
               (catch js/Exception e)))))
 
+(defn- get-values [node]
+  (cons (if (= (.-nodeType node) js/Node.TEXT_NODE)
+          (.-nodeValue node))
+        (map get-values (node-list (.-childNodes node)))))
+
 (extend-type js/Node
   rdfa.dom/DomAccess
   (get-name [this] (.-nodeName this))
-  (set-attr [this attr-name value] (.setAttribute this attr-name value))
   (get-attr [this attr-name] (if (and (.-hasAttribute this)
                                       (.hasAttribute this attr-name))
                                (.getAttribute this attr-name)))
@@ -34,11 +39,7 @@
     (filter #(= (.-nodeType %1) js/Node.ELEMENT_NODE)
             (node-list (.-childNodes this))))
   (get-text [this]
-    (letfn [(get-values [node]
-                        (cons (if (= (.-nodeType node) js/Node.TEXT_NODE)
-                                (.-nodeValue node))
-                              (map get-values (node-list (.-childNodes node)))))]
-      (string/join (flatten (get-values this)))))
+    (string/join (flatten (get-values this))))
   (get-inner-xml
     [this xmlns-map lang]
     (loop [nodes (node-list (.-childNodes this))

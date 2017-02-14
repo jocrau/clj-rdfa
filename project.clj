@@ -13,7 +13,8 @@
                  [org.clojure/clojurescript "1.9.293"]
                  [org.clojure/tools.cli "0.3.5"]
                  [com.taoensso/timbre "4.5.1"]
-                 [org.jsoup/jsoup "1.10.1"]]
+                 [org.jsoup/jsoup "1.10.1"]
+                 [hickory "0.7.0" :exclusions [org.jsoup/jsoup]]]
   :profiles {:dev     {:plugins      [[lein-figwheel "0.5.9" :exclusions [org.clojure/clojure]]]
                        :dependencies [[figwheel-sidecar "0.5.9"]]}
              :uberjar {:main rdfa.api

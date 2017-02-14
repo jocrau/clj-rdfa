@@ -54,7 +54,7 @@
    (let [[repr is-safe] (parse-safe-curie repr)]
      (cond
        (empty? repr)
-       [nil nil]
+       [nil nil nil]
 
        (> (.indexOf repr ":") -1)
        (let [[pfx term] (string/split repr #":" 2)
@@ -87,10 +87,10 @@
        [nil nil nil]
 
        :else
-       (let [pfx (string/lower-case repr)]
-         (if-let [iri (term-map pfx)]
-           [(to-iri iri base) nil pfx]
-           [nil {:undefined-term repr} nil]))))))
+       (if-let [iri (or (term-map repr)
+                        (term-map (string/lower-case repr)))]
+         [(to-iri iri base) nil nil]
+         [nil {:undefined-term repr} nil])))))
 
 (defn to-curie-or-iri [env repr]
   (let [is-safe (= (first repr) \[)
@@ -98,16 +98,13 @@
         res (or iri (if-not is-safe (to-iri repr (env :base))))]
     [res err pfx]))
 
-(defn to-node [env repr]
-  (expand-term-or-curie env repr))
-
 (defn to-nodes [env expr]
   (if (not-empty expr)
     (let [tokens (string/split (string/trim expr) #"\s+")
-          coll (map #(to-node env %) tokens)
+          coll (map #(expand-term-or-curie env %) tokens)
           nodes (keep #(first %) coll)
           errs (keep #(second %) coll)
-          pfxs (keep #(when (> (count coll) 2) (nth % 2)) coll)]
+          pfxs (keep #(nth % 2) coll)]
       [nodes errs pfxs])))
 
 (defn parse-prefix [prefix]
@@ -193,7 +190,7 @@
                                    (or (data :content) (data :datatype)))
                               (not new-pred)))
         subject (or (if use-resource resource-and-err about-and-err)
-                    (if (data :is-root) [nil nil]))]
+                    (if (data :is-root) [nil nil nil]))]
     (cond
       subject subject
       (and (data :typeof) (not new-pred)
@@ -210,7 +207,7 @@
                                    (and (data :typeof)
                                         (not (data :about)))))))
         [datatype dt-err] (if-let [dt (not-empty (data :datatype))]
-                            (to-node env dt))
+                            (expand-term-or-curie env dt))
         as-xml (= datatype rdf:XMLLiteral)
         repr (or (data :content)
                  (if as-literal (if as-xml
@@ -358,9 +355,10 @@
 (defn combine-element-visits [[prev-env
                                prev-triples
                                prev-proc-triples] child]
-  (let [{{list-map :list-map} :env
-         triples              :triples
-         proc-triples         :proc-triples} (visit-element prev-env child)]
+  (let [{env          :env
+         triples      :triples
+         proc-triples :proc-triples} (visit-element prev-env child)
+        list-map (:list-map env)]
     [(if (empty? list-map)
        prev-env
        (assoc prev-env :list-map list-map))
@@ -368,7 +366,6 @@
      (concat prev-proc-triples proc-triples)]))
 
 (defn visit-element [parent-env el]
-  (println (:prefixes parent-env))
   (let [[env data triples proc-triples] (process-element parent-env el)
         has-about (data :about)
         s (env :parent-object)
@@ -391,12 +388,11 @@
                                   :when (or changed-s
                                             (not (contains? current-list-map p)))]
                               (gen-list-triples s p l)))
-        result-env (-> env
-                       (assoc :list-map (cond
-                                          changed-s current-list-map
-                                          (empty? list-triples) combined-list-map
-                                          :else current-list-map))
-                       (update-in [:prefixes] into (concat (:prefixes parent-env) (:prefixes child-env))))]
+        result-env (assoc env
+                     :list-map (cond
+                                 changed-s current-list-map
+                                 (empty? list-triples) combined-list-map
+                                 :else current-list-map))]
     {:env          result-env
      :triples      (concat triples child-triples list-triples)
      :proc-triples (concat proc-triples child-proc-triples)}))

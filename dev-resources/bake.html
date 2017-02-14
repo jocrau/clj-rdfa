@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <base href="../resources/" />
-    <title property="http://www.w3.org/2000/01/rdf-schema#label">Recipes Template</title>
+    <title property="rdfs:label">Recipes Template</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap-responsive.min.css" type="text/css" />
@@ -26,7 +26,7 @@
   color: #555;
 }
 
-.span9 *[rel~="http://schema.org/image"] {
+.span9 *[rel~="schema:image"] {
 	max-width: 40%;
 	max-height: 200px;
 	margin: 10px;
@@ -52,7 +52,7 @@
 	background-color: #d5d6ff;
 }
 
-*[typeof~="http://schema.org/VideoObject"], *[typeof~="http://www.w3.org/ns/ma-ont#MediaResource"]  {
+*[typeof~="schema:VideoObject"], *[typeof~="http://www.w3.org/ns/ma-ont#MediaResource"]  {
 	position: relative;
 }
 
@@ -76,31 +76,31 @@
     <div class="span12">
 
         <div rel="http://knowl-edge.org/ontology/core#contains">
-            <div about="http://bakeopedia.org/recipe/moms-world-famous-banana-bread" typeof="http://schema.org/Recipe">
+            <div about="http://bakeopedia.org/recipe/moms-world-famous-banana-bread" typeof="schema:Recipe">
 
                 <h2 property="schema:name">Mom's World Famous Banana Bread</h2>
 
                 <p>By <span rel="schema:creator">
-						<span about="http://dbpedia.org/resource/Peter_Pan" typeof="http://xmlns.com/foaf/0.1/Person"><span property="http://xmlns.com/foaf/0.1/name http://www.w3.org/2000/01/rdf-schema#label">Peter Pan</span></span></span>,
-                    <span property="http://schema.org/datePublished" content="2009-05-08">May 8, 2009</span>
+						<span about="http://dbpedia.org/resource/Peter_Pan" typeof="foaf:Person"><span property="foaf:name rdfs:label">Peter Pan</span></span></span>,
+                    <span property="schema:datePublished" content="2009-05-08">May 8, 2009</span>
                 </p>
 
                 <div class="row">
                     <div class="span6">
 
-                        <p><img rel="http://schema.org/image" src="http://placehold.it/300x200" class="img-polaroid"/></p>
+                        <p><img rel="schema:image" src="http://placehold.it/300x200" class="img-polaroid"/></p>
 
-                        <div rel="http://schema.org/video">
-                            <div about="http://example.com/foo/sdafsdf" typeof="http://www.w3.org/ns/ma-ont#MediaResource http://schema.org/VideoObject">
+                        <div rel="schema:video">
+                            <div about="http://example.com/foo/sdafsdf" typeof="http://www.w3.org/ns/ma-ont#MediaResource schema:VideoObject">
                                 <iframe id="player" rel="http://www.w3.org/ns/ma-ont#locator" src="https://www.youtube.com/embed/xyz?enablejsapi=1&origin=http://localhost:8080/" width="100%" height="315" frameborder="0" wmode="transparent" allowfullscreen class="img-polaroid"></iframe>
                                 <div rel="http://www.w3.org/ns/ma-ont#hasFragment">
                                     <div about="http://example.com/foo/1212123dsfasdffd" typeof="http://knowl-edge.org/ontology/core#TemporalFragment">
-                                        <div rel="http://schema.org/mentions"><div about="http://example.com/something" typeof="http://bakepedia.org/ontology#Component http://bakepedia.org/ontology#Step http://www.w3.org/2002/07/owl#Thing http://dbpedia.org/class/yago/KitchenwareBrands"></div></div>
+                                        <div rel="schema:mentions"><div about="http://example.com/something" typeof="http://bakepedia.org/ontology#Component http://bakepedia.org/ontology#Step http://www.w3.org/2002/07/owl#Thing http://dbpedia.org/class/yago/KitchenwareBrands"></div></div>
                                         <div property="http://knowl-edge.org/ontology/core#start"></div>
                                         <div property="http://knowl-edge.org/ontology/core#end"></div>
                                     </div>
                                     <div about="http://example.com/foo/12156476745dfgdfg" typeof="http://knowl-edge.org/ontology/core#SpatialFragment">
-                                        <div rel="http://schema.org/mentions"><div about="http://example.com/somethingelse" typeof="http://bakepedia.org/ontology#Guide http://bakepedia.org/ontology#Ingredient http://bakepedia.org/ontology#Appliance http://purl.org/goodrelations/v1#Offering"></div></div>
+                                        <div rel="schema:mentions"><div about="http://example.com/somethingelse" typeof="http://bakepedia.org/ontology#Guide http://bakepedia.org/ontology#Ingredient http://bakepedia.org/ontology#Appliance http://purl.org/goodrelations/v1#Offering"></div></div>
                                         <div property="http://knowl-edge.org/ontology/core#start"></div>
                                         <div property="http://knowl-edge.org/ontology/core#end"></div>
                                         <div property="http://knowl-edge.org/ontology/core#top"></div>
@@ -124,14 +124,14 @@
                                 <span rel="http://bakepedia.org/ontology#ingredient">
 										<span typeof="http://bakepedia.org/ontology#Ingredient">
 											<span property="http://bakepedia.org/ontology#name">Bananas</span>
-											<span rel="http://www.w3.org/2000/01/rdf-schema#seeAlso" style="display: none;">
+											<span rel="rdfs:seeAlso" style="display: none;">
 												<span typeof="http://dbpedia.org/class/yago/LeaveningAgents
 															http://dbpedia.org/class/yago/Cereals
 															http://dbpedia.org/class/yago/FoodAdditives
-															http://www.w3.org/2000/01/rdf-schema#Resource
+															rdfs:Resource
 															http://www.w3.org/2002/07/owl#Thing">
-													<img rel="http://dbpedia.org/ontology/thumbnail http://schema.org/image http://xmlns.com/foaf/0.1/depiction" src="http://placehold.it/300x200" class="img-polaroid pull-right"/>
-													<span property="http://www.w3.org/2000/01/rdf-schema#comment"> </span>
+													<img rel="http://dbpedia.org/ontology/thumbnail schema:image http://xmlns.com/foaf/0.1/depiction" src="http://placehold.it/300x200" class="img-polaroid pull-right"/>
+													<span property="rdfs:comment"> </span>
 													<a rel="http://xmlns.com/foaf/0.1/isPrimaryTopicOf http://knowl-edge.org/ontology/core#externalLink http://dbpedia.org/ontology/wikiPageExternalLink" href="#" class="btn btn-small pull-right">Buy Online</a>
 												</span>
 											</span>
@@ -143,7 +143,7 @@
 
                         <h4>Preparation</h4>
 
-                        <p property="http://schema.org/recipeInstructions">
+                        <p property="schema:recipeInstructions">
                             Preheat the oven to 350 degrees. Mix in the ingredients in a bowl. Add
                             the flour last. Pour the mixture into a loaf pan and bake for one hour.
                         </p>
@@ -156,34 +156,34 @@
 
                         <p>1 serving contains</p>
 
-                        <div rel="http://schema.org/nutrition">
-                            <div typeof="http://schema.org/NutritionInformation">
-                                <div>Calories <span property="http://schema.org/calories">42</span>kcal</div>
-                                <div>Fat <span property="http://schema.org/fatContent">42</span>g</div>
-                                <div>Saturated Fat <span property="http://schema.org/saturatedFatContent">42</span>g</div>
-                                <div>Cholesterol <span property="http://schema.org/cholesterolContent">42</span>mg</div>
-                                <div>Carbohydrates <span property="http://schema.org/carbohydrateContent">42</span>g</div>
-                                <div>Dietary Fiber <span property="http://schema.org/fiberContent">42</span>g</div>
-                                <div>Total Sugars <span property="http://schema.org/sugarContent">42</span>g</div>
-                                <div>Protein <span property="http://schema.org/proteinContent">42</span>g</div>
-                                <div>Sodium <span property="http://schema.org/sodiumContent">42</span>mg</div>
+                        <div rel="schema:nutrition">
+                            <div typeof="schema:NutritionInformation">
+                                <div>Calories <span property="schema:calories">42</span>kcal</div>
+                                <div>Fat <span property="schema:fatContent">42</span>g</div>
+                                <div>Saturated Fat <span property="schema:saturatedFatContent">42</span>g</div>
+                                <div>Cholesterol <span property="schema:cholesterolContent">42</span>mg</div>
+                                <div>Carbohydrates <span property="schema:carbohydrateContent">42</span>g</div>
+                                <div>Dietary Fiber <span property="schema:fiberContent">42</span>g</div>
+                                <div>Total Sugars <span property="schema:sugarContent">42</span>g</div>
+                                <div>Protein <span property="schema:proteinContent">42</span>g</div>
+                                <div>Sodium <span property="schema:sodiumContent">42</span>mg</div>
                             </div>
                         </div>
                     </div>
                     <div class="span3">
                         <h4>Ratings</h4>
 
-                        <p property="http://schema.org/aggregateRating" typeof="http://schema.org/AggregateRating">
-                            <span property="http://schema.org/ratingValue">4</span> stars - based on <span property="http://schema.org/reviewCount">250</span> reviews
+                        <p property="schema:aggregateRating" typeof="schema:AggregateRating">
+                            <span property="schema:ratingValue">4</span> stars - based on <span property="schema:reviewCount">250</span> reviews
                         </p>
                     </div>
                     <div class="span3">
                         <h4>More Information</h4>
 
                         <p>
-                            Prep Time: <span property="http://schema.org/prepTime" content="PT15M">15 minutes</span><br />
-                            Total time: <span property="http://schema.org/totalTime" content="PT3H">3 hour</span><br/>
-                            Yield: <span property="http://schema.org/recipeYield">1 loaf</span>
+                            Prep Time: <span property="schema:prepTime" content="PT15M">15 minutes</span><br />
+                            Total time: <span property="schema:totalTime" content="PT3H">3 hour</span><br/>
+                            Yield: <span property="schema:recipeYield">1 loaf</span>
                         </p>
 
                         <p><a rel="http://knowl-edge.org/ontology/core#externalLink" href="#">Read More</a></p>

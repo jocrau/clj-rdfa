@@ -46,8 +46,7 @@
 
 (defn expand-term-or-curie
   ([env repr]
-   (expand-term-or-curie repr (env :base)
-                         (env :prefix-map) (env :term-map) (env :vocab)))
+   (expand-term-or-curie repr (:base env) (:prefix-map env) (:term-map env) (:vocab env)))
   ([repr base prefix-map]
    (expand-term-or-curie repr base prefix-map nil nil))
   ([repr base prefix-map term-map vocab]
@@ -94,8 +93,8 @@
 
 (defn to-curie-or-iri [env repr]
   (let [is-safe (= (first repr) \[)
-        [iri err pfx] (expand-term-or-curie repr (env :base) (env :prefix-map))
-        res (or iri (if-not is-safe (to-iri repr (env :base))))]
+        [iri err pfx] (expand-term-or-curie repr (:base env) (:prefix-map env))
+        res (or iri (if-not is-safe (to-iri repr (:base env))))]
     [res err pfx]))
 
 (defn to-nodes [env expr]
@@ -206,8 +205,8 @@
                           (not (or (not-empty (data :resources))
                                    (and (data :typeof)
                                         (not (data :about)))))))
-        [datatype dt-err] (if-let [dt (not-empty (data :datatype))]
-                            (expand-term-or-curie env dt))
+        [datatype dt-err _] (if-let [dt (not-empty (data :datatype))]
+                              (expand-term-or-curie env dt))
         as-xml (= datatype rdf:XMLLiteral)
         repr (or (data :content)
                  (if as-literal (if as-xml
@@ -359,40 +358,43 @@
          triples      :triples
          proc-triples :proc-triples} (visit-element prev-env child)
         list-map (:list-map env)]
-    [(if (empty? list-map)
-       prev-env
-       (assoc prev-env :list-map list-map))
+    [(update (if (empty? list-map)
+               prev-env
+               (assoc prev-env :list-map list-map))
+             :prefixes into (:prefixes env))
      (concat prev-triples triples)
      (concat prev-proc-triples proc-triples)]))
 
 (defn visit-element [parent-env el]
   (let [[env data triples proc-triples] (process-element parent-env el)
         has-about (data :about)
-        s (env :parent-object)
-        changed-s (not= s (parent-env :parent-object))
-        new-list-map (env :list-map)
+        s (:parent-object env)
+        changed-s (not= s (:parent-object parent-env))
+        new-list-map (:list-map env)
         current-list-map (merge-with concat
-                                     (parent-env :list-map)
+                                     (:list-map parent-env)
                                      (if has-about {} new-list-map))
         local-env (assoc env :list-map (if changed-s
                                          (if has-about new-list-map {})
                                          current-list-map))
         [child-env
          child-triples
-         child-proc-triples] (reduce
-                               combine-element-visits [local-env nil nil]
-                               (dom/get-child-elements el))
+         child-proc-triples] (reduce combine-element-visits
+                                     [local-env nil nil]
+                                     (dom/get-child-elements el))
         combined-list-map (:list-map child-env)
         list-triples (apply concat
                             (for [[p l] combined-list-map
                                   :when (or changed-s
                                             (not (contains? current-list-map p)))]
                               (gen-list-triples s p l)))
-        result-env (assoc env
-                     :list-map (cond
-                                 changed-s current-list-map
-                                 (empty? list-triples) combined-list-map
-                                 :else current-list-map))]
+        combined-prefixes (:prefixes child-env)
+        result-env (update (assoc env
+                             :list-map (cond
+                                         changed-s current-list-map
+                                         (empty? list-triples) combined-list-map
+                                         :else current-list-map))
+                           :prefixes into combined-prefixes)]
     {:env          result-env
      :triples      (concat triples child-triples list-triples)
      :proc-triples (concat proc-triples child-proc-triples)}))

@@ -257,7 +257,6 @@
         [object-literal dt-err] (get-literal env data)
         [types t-errs] (if-let [typeof (data :typeof)] (to-nodes env typeof))
         errs (concat (remove nil? [s-err o-err dt-err]) p-errs t-errs)]
-
     [subject types object-resource object-literal
      props rels revs list-ps
      env data errs]))
@@ -269,11 +268,16 @@
            (not (data :inlist)))
     (next-bnode)))
 
+(defn- create-triple
+  ([s p o] [s p o])
+  ([s p o element]
+   (with-meta [s p o] {:element element})))
+
 (defn create-warning-triples [warning]
   (let [warn-node (next-bnode)
         descr (Literal. (str warning) "en")]
-    [[warn-node rdf:type rdfa:Warning]
-     [warn-node dc:description descr]]))
+    [(create-triple warn-node rdf:type rdfa:Warning)
+     (create-triple warn-node dc:description descr)]))
 
 (defn process-element [parent-env el]
   (let [[subject types o-resource o-literal
@@ -302,22 +306,22 @@
                                     [p [next-parent-o]]))))
         regular-triples (concat
                           (if o-literal
-                            (for [p props] [active-s p o-literal]))
+                            (for [p props] (create-triple active-s p o-literal el)))
                           (if o-resource
                             (concat (for [p (if o-literal rels
                                                           (concat props rels))]
-                                      [active-s p o-resource])
-                                    (for [p revs] [o-resource p active-s]))))
+                                      (create-triple active-s p o-resource el))
+                                    (for [p revs] (create-triple o-resource p active-s el)))))
         type-triples (let [ts (if (or has-about (not o-resource))
                                 active-s o-resource)]
-                       (for [t types] [ts rdf:type t]))
+                       (for [t types] (create-triple ts rdf:type t el)))
         completed-triples (if completing-s
                             (let [{rels :rels revs :revs} incomplete]
                               (concat
-                                (for [rel rels] [parent-o rel completing-s])
-                                (for [rev revs] [completing-s rev parent-o]))))
+                                (for [rel rels] (create-triple parent-o rel completing-s el))
+                                (for [rev revs] (create-triple completing-s rev parent-o el)))))
         vocab-triples (if (not-empty (data :vocab))
-                        [[(IRI. (env :base)) rdfa:usesVocabulary (IRI. (env :vocab))]])
+                        [(create-triple (IRI. (env :base)) rdfa:usesVocabulary (IRI. (env :vocab)) el)])
         proc-triples (mapcat create-warning-triples errs)
         next-incomplete (cond
                           (and (or rels revs list-ps) (not active-o))

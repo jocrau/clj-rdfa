@@ -53,7 +53,7 @@
    (let [[repr is-safe] (parse-safe-curie repr)]
      (cond
        (empty? repr)
-       [nil nil nil]
+       [nil nil]
 
        (> (.indexOf repr ":") -1)
        (let [[pfx term] (string/split repr #":" 2)
@@ -63,48 +63,47 @@
          (cond
            (and (or pfx-vocab is-bnode is-bnode)
                 (= (take 2 term) '(\/ \/)))
-           [nil {:malformed-curie repr} nil]
+           [nil {:malformed-curie repr}]
 
            is-empty
-           [(IRI. (str xhv term)) nil nil]
+           [(IRI. (str xhv term)) nil]
 
            is-bnode
-           [(BNode. (or (not-empty term) gen-bnode-prefix)) nil nil]
+           [(BNode. (or (not-empty term) gen-bnode-prefix)) nil]
 
            pfx-vocab
-           [(IRI. (str pfx-vocab term)) nil pfx]
+           [(IRI. (str pfx-vocab term)) nil]
 
            :else
            (if-let [iri (if-not is-safe (to-iri repr ""))]
-             [iri nil nil]
-             [nil {:undefined-prefix pfx} nil])))
+             [iri nil]
+             [nil {:undefined-prefix pfx}])))
 
        (not-empty vocab)
-       [(to-iri (str vocab repr) base) nil nil]
+       [(to-iri (str vocab repr) base) nil]
 
        (nil? term-map)
-       [nil nil nil]
+       [nil nil]
 
        :else
        (if-let [iri (or (term-map repr)
                         (term-map (string/lower-case repr)))]
-         [(to-iri iri base) nil nil]
-         [nil {:undefined-term repr} nil])))))
+         [(to-iri iri base) nil]
+         [nil {:undefined-term repr}])))))
 
 (defn to-curie-or-iri [env repr]
   (let [is-safe (= (first repr) \[)
-        [iri err pfx] (expand-term-or-curie repr (:base env) (:prefix-map env))
+        [iri err] (expand-term-or-curie repr (:base env) (:prefix-map env))
         res (or iri (if-not is-safe (to-iri repr (:base env))))]
-    [res err pfx]))
+    [res err]))
 
 (defn to-nodes [env expr]
   (if (not-empty expr)
     (let [tokens (string/split (string/trim expr) #"\s+")
           coll (map #(expand-term-or-curie env %) tokens)
           nodes (keep #(first %) coll)
-          errs (keep #(second %) coll)
-          pfxs (keep #(nth % 2) coll)]
-      [nodes errs pfxs])))
+          errs (keep #(second %) coll)]
+      [nodes errs])))
 
 (defn parse-prefix [prefix]
   (if (empty? prefix) nil
@@ -189,11 +188,13 @@
                                    (or (data :content) (data :datatype)))
                               (not new-pred)))
         subject (or (if use-resource resource-and-err about-and-err)
-                    (if (data :is-root) [nil nil nil]))]
+                    (if (data :is-root) [nil nil]))]
     (cond
       subject subject
+
       (and (data :typeof) (not new-pred)
-           (not (first resource-and-err))) [(next-bnode) nil])))
+           (not (first resource-and-err)))
+      [(next-bnode) nil])))
 
 (defn get-literal [env data]
   (let [el (data :element)
@@ -231,37 +232,35 @@
       (get-resolved-resource env resources)
 
       (or (and link (not (data :about)) typeof) (and prop typeof))
-      [(next-bnode) nil nil])))
+      [(next-bnode) nil])))
 
 (defn get-props-rels-revs-lists [env data]
   (let [inlist (data :inlist)
         to-predicates (fn [repr]
                         (filter #(not= (type (first %1)) BNode)
                                 (to-nodes env repr)))
-        [props prop-errs prop-pfxs] (to-predicates (data :property))
-        [rels rel-errs rel-pfxs] (to-predicates (data :rel))
-        [revs rev-errs rev-pfxs] (to-predicates (data :rev))
-        errs (concat prop-errs rel-errs rev-errs)
-        prefixes (concat prop-pfxs rel-pfxs rev-pfxs)]
+        [props prop-errs] (to-predicates (data :property))
+        [rels rel-errs] (to-predicates (data :rel))
+        [revs rev-errs] (to-predicates (data :rev))
+        errs (concat prop-errs rel-errs rev-errs)]
     [(if inlist
-       [nil nil revs (or props rels) prefixes]
-       [props rels revs nil]) errs prefixes]))
+       [nil nil revs (or props rels)]
+       [props rels revs nil]) errs]))
 
 (defn parse-element [parent-env el]
   (let [data (extended-data parent-env (get-data el))
         env (update-mappings parent-env data)
-        [subject s-err s-pfx] (get-subject env data)
+        [subject s-err] (get-subject env data)
         [[props rels revs list-ps]
-         p-errs
-         p-pfxs] (get-props-rels-revs-lists env data)
-        [object-resource o-err o-pfx] (get-object env data)
+         p-errs] (get-props-rels-revs-lists env data)
+        [object-resource o-err] (get-object env data)
         [object-literal dt-err] (get-literal env data)
-        [types t-errs t-pfxs] (if-let [typeof (data :typeof)] (to-nodes env typeof))
-        errs (concat (remove nil? [s-err o-err dt-err]) p-errs t-errs)
-        pfxs (into #{} (concat (remove nil? [s-pfx o-pfx]) p-pfxs t-pfxs))]
+        [types t-errs] (if-let [typeof (data :typeof)] (to-nodes env typeof))
+        errs (concat (remove nil? [s-err o-err dt-err]) p-errs t-errs)]
+
     [subject types object-resource object-literal
      props rels revs list-ps
-     env data errs pfxs]))
+     env data errs]))
 
 (defn get-hanging [data]
   (if (and (or (data :rel) (data :rev))
@@ -279,7 +278,7 @@
 (defn process-element [parent-env el]
   (let [[subject types o-resource o-literal
          props rels revs list-ps
-         env data errs pfxs] (parse-element parent-env el)
+         env data errs] (parse-element parent-env el)
         parent-o (env :parent-object)
         incomplete-s (env :incomplete-subject)
         incomplete (env :incomplete)
@@ -326,7 +325,6 @@
                           (not-empty completed-triples) {}
                           :else incomplete)
         env (assoc env
-              :prefixes pfxs
               :incomplete next-incomplete
               :incomplete-subject next-incomplete-s
               :parent-object next-parent-o
@@ -388,13 +386,11 @@
                                   :when (or changed-s
                                             (not (contains? current-list-map p)))]
                               (gen-list-triples s p l)))
-        combined-prefixes (:prefixes child-env)
-        result-env (update (assoc env
-                             :list-map (cond
-                                         changed-s current-list-map
-                                         (empty? list-triples) combined-list-map
-                                         :else current-list-map))
-                           :prefixes into combined-prefixes)]
+        result-env (assoc env
+                     :list-map (cond
+                                 changed-s current-list-map
+                                 (empty? list-triples) combined-list-map
+                                 :else current-list-map))]
     {:env          result-env
      :triples      (concat triples child-triples list-triples)
      :proc-triples (concat proc-triples child-proc-triples)}))

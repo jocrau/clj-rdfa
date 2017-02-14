@@ -405,7 +405,6 @@
 
 (defn extract [root context]
   (try
-    (assert (satisfies? DomAccess root) "The root element must implement DomAccess protocol.")
     (let [base-env (init-env (:location context) (get-host-env (:host-language context) root))]
       (visit-element base-env root))
     (catch #?(:clj Exception :cljs js/Error) e

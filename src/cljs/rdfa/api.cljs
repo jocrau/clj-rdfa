@@ -1,6 +1,9 @@
 (ns rdfa.api
   (:require
     [rdfa.dom.google]
+    [rdfa.dom.hickory]
+    [rdfa.parser :refer [parse]]
+    [rdfa.parser.hickory]
     [rdfa.extractor :refer [extract]]
     [rdfa.serializer :refer [serialize]]
     [rdfa.profiles :refer [detect-host-language]]
@@ -13,8 +16,12 @@
         host-language (detect-host-language location nil)
         context {:location      location
                  :host-language host-language}
-        result (-> (.-documentElement js/document)
-                   (extract context)
-                   (serialize context))]
-    (aset (.getElementById js/document "rdf-container") "innerHTML" (string/htmlEscape result))
+        source (.-outerHTML (.-documentElement js/document))
+        result (-> source
+                   (parse context)
+                   (extract context))]
+    (doseq [triple (:triples result)]
+      (println triple)
+      (->> triple meta :element println))
+    (println (serialize result context))
     nil))

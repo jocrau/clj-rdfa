@@ -1,9 +1,9 @@
 (ns rdfa.extractor
   (:require
     [clojure.string :as string]
-    [rdfa.dom :as dom :refer [DomAccess]]
-    #?(:clj
-    [rdfa.dom.jsoup])
+    [rdfa.dom :as dom]
+    [rdfa.dom.hickory]
+    #?(:clj [rdfa.dom.jsoup])
     #?(:cljs [rdfa.dom.google])
     #?(:clj
     [rdfa.rdf])

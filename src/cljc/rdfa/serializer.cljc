@@ -44,6 +44,6 @@
        "\n"))
 
 (defn ^:export serialize [{:keys [env triples proc-triples]} context]
-  (str (print-prefixes env)
+  (str #_(print-prefixes env)
        (print-triples triples)
        (print-triples proc-triples)))

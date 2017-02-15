@@ -21,7 +21,8 @@
                     (when (string/starts-with? (name key) "xmlns:")
                       [(subs (name key) 6) value]))
                   (:attrs this))))
-  (is-root? [this] true)                                    ;; TODO Can we know whether that is a root element?
+  (is-root? [this]
+    (some-> this meta :is-root))
   (find-by-tag [this tag] (some
                             (fn [[k v]]
                               (cond (= v tag) [k]

@@ -4,7 +4,7 @@
     [hickory.core :as h]))
 
 (defn parse* [source context]
-  (h/as-hickory (h/parse source)))
+  (with-meta (h/as-hickory (h/parse source)) {:is-root true}))
 
 (defmethod parse :html [source context]
   (parse* source context))

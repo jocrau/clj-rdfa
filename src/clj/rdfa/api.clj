@@ -3,6 +3,7 @@
   (:require
     [clojure.tools.cli :refer [parse-opts]]
     [datascript.core :as d]
+    [net.cgrand.enlive-html :as html]
     [rdfa.parser :refer [parse]]
     #_[rdfa.parser.jsoup]
     [rdfa.parser.hickory]
@@ -83,5 +84,13 @@
          [?node :o "#rdfa.rdf.IRI{:id \"http://schema.org/Recipe\"}"]
          [?node :e ?e]]
        @conn)
+
+  (let [source (d/q '[:find ?e .
+                      :where
+                      [?node :o "#rdfa.rdf.IRI{:id \"http://schema.org/Recipe\"}"]
+                      [?node :e ?e]]
+                    @conn)]
+    ((html/snippet* (html/select source [:div]) []
+                    [:div] (html/content "sdfsdfa"))))
 
   )

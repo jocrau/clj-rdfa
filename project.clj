@@ -15,7 +15,9 @@
                  [com.taoensso/timbre "4.5.1"]
                  [org.jsoup/jsoup "1.10.1"]
                  [hickory "0.7.0" :exclusions [org.jsoup/jsoup]]
-                 [datascript "0.15.5"]]
+                 [datascript "0.15.5"]
+                 [enlive "1.1.6"]
+                 [kioo "0.5.0-SNAPSHOT" :exclusions [cljsjs/react org.omcljs/om]]]
   :profiles {:dev     {:plugins      [[lein-figwheel "0.5.9" :exclusions [org.clojure/clojure]]]
                        :dependencies [[figwheel-sidecar "0.5.9"]]}
              :uberjar {:main rdfa.api

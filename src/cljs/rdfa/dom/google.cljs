@@ -1,8 +1,8 @@
 (ns rdfa.dom.google
   (:require
+    [rdfa.dom :refer [DomAccess get-name get-attr get-ns-map is-root? find-by-tag get-child-elements get-text]]
     [clojure.string :as string]
-    [goog.dom :as gdom]
-    [rdfa.dom :as dom]))
+    [goog.dom :as gdom]))
 
 (defn- node-list [nl]
   (if-not (nil? nl)
@@ -22,14 +22,16 @@
         (map get-values (node-list (.-childNodes node)))))
 
 (extend-type js/Node
+  DomAccess
   rdfa.dom/DomAccess
   (get-name [this] (.-nodeName this))
-  (get-attr [this attr-name] (if (and (.-hasAttribute this)
-                                      (.hasAttribute this attr-name))
-                               (.getAttribute this attr-name)))
+  (get-attr [this attr-name]
+    (if (and (.-hasAttribute this)
+             (.hasAttribute this attr-name))
+      (.getAttribute this attr-name)))
   (get-ns-map [this] (into {} (for [attr (node-list (.-attributes this))
-                                    :when (= (subs (dom/get-name attr) 0 6) "xmlns:")]
-                                [(subs (dom/get-name attr) 6) (.-value attr)])))
+                                    :when (= (subs (get-name attr) 0 6) "xmlns:")]
+                                [(subs (get-name attr) 6) (.-value attr)])))
   (is-root? [this]
     (if-let [owner-document (.-ownerDocument this)]
       (= this (.-documentElement owner-document))))

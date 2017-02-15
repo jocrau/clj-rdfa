@@ -55,7 +55,7 @@
 
   (let [context {:location      "http://example.com/"
                  :host-language :html}]
-    (-> (slurp "file:///Users/jocrau/dev/workspaces/clj-rdfa/dev-resources/bake.html")
+    (-> (slurp "file:///Users/jocrau/dev/workspaces/clj-rdfa/resources/bake.html")
         (parse context)
         (extract context)))
 
@@ -72,7 +72,7 @@
 
   (let [context {:location      "http://example.com/"
                  :host-language :html}
-        document (slurp "file:///Users/jocrau/dev/workspaces/clj-rdfa/dev-resources/bake.html")]
+        document (slurp "file:///Users/jocrau/dev/workspaces/clj-rdfa/resources/bake.html")]
     (-> document
         (parse context)
         (extract context)
@@ -81,16 +81,19 @@
 
   (d/q '[:find ?e .
          :where
-         [?node :o "#rdfa.rdf.IRI{:id \"http://schema.org/Recipe\"}"]
+         [?node :o "#rdfa.rdf.IRI{:id \"http://schema.org/NutritionInformation\"}"]
          [?node :e ?e]]
        @conn)
 
   (let [source (d/q '[:find ?e .
                       :where
-                      [?node :o "#rdfa.rdf.IRI{:id \"http://schema.org/Recipe\"}"]
+                      [?node :o "#rdfa.rdf.IRI{:id \"http://schema.org/NutritionInformation\"}"]
                       [?node :e ?e]]
                     @conn)]
-    ((html/snippet* (html/select source [:div]) []
-                    [:div] (html/content "sdfsdfa"))))
+    (->> ((html/snippet* (html/select source [:div]) []
+                         [:div] (html/content "sdfsdfa")))
+         (html/emit*)
+         (apply str)
+         (spit "resources/test-enlive.html")))
 
   )

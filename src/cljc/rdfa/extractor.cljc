@@ -1,15 +1,21 @@
 (ns rdfa.extractor
   (:require
     [clojure.string :as string]
+    #?(:clj
+    [net.cgrand.enlive-html :as html])
+    #?(:cljs [kioo.reagent :as html])
     [rdfa.dom :as dom]
     [rdfa.dom.hickory]
-    #?(:clj [rdfa.dom.jsoup])
+    #?(:clj
+    [rdfa.dom.jsoup])
     #?(:cljs [rdfa.dom.google])
     #?(:clj
     [rdfa.rdf])
     #?(:cljs [rdfa.rdf :refer [IRI BNode Literal]])
     [rdfa.profiles :refer [detect-host-language extended-data get-host-env]]
-    [rdfa.iri :refer [resolve-iri]])
+    [rdfa.iri :refer [resolve-iri]]
+    [net.cgrand.enlive-html :as html]
+    [net.cgrand.enlive-html :as html])
   #?(:clj
      (:import
        [rdfa.rdf IRI BNode Literal])))
@@ -44,56 +50,51 @@
   (let [match (re-matches #"^\[(.*?)\]$" repr)]
     [(if match (match 1) repr) (vector? match)]))
 
-(defn expand-term-or-curie
-  ([env repr]
-   (expand-term-or-curie repr (:base env) (:prefix-map env) (:term-map env) (:vocab env)))
-  ([repr base prefix-map]
-   (expand-term-or-curie repr base prefix-map nil nil))
-  ([repr base prefix-map term-map vocab]
-   (let [[repr is-safe] (parse-safe-curie repr)]
-     (cond
-       (empty? repr)
-       [nil nil]
+(defn expand-term-or-curie [{:keys [base prefix-map term-map vocab]} repr]
+  (let [[repr is-safe] (parse-safe-curie repr)]
+    (cond
+      (empty? repr)
+      [nil nil]
 
-       (> (.indexOf repr ":") -1)
-       (let [[pfx term] (string/split repr #":" 2)
-             is-empty (empty? pfx)
-             is-bnode (if-not is-empty (= pfx "_"))
-             pfx-vocab (if-not is-bnode (prefix-map pfx))]
-         (cond
-           (and (or pfx-vocab is-bnode is-bnode)
-                (= (take 2 term) '(\/ \/)))
-           [nil {:malformed-curie repr}]
+      (> (.indexOf repr ":") -1)
+      (let [[pfx term] (string/split repr #":" 2)
+            is-empty (empty? pfx)
+            is-bnode (if-not is-empty (= pfx "_"))
+            pfx-vocab (if-not is-bnode (prefix-map pfx))]
+        (cond
+          (and (or pfx-vocab is-bnode is-bnode)
+               (= (take 2 term) '(\/ \/)))
+          [nil {:malformed-curie repr}]
 
-           is-empty
-           [(IRI. (str xhv term)) nil]
+          is-empty
+          [(IRI. (str xhv term)) nil]
 
-           is-bnode
-           [(BNode. (or (not-empty term) gen-bnode-prefix)) nil]
+          is-bnode
+          [(BNode. (or (not-empty term) gen-bnode-prefix)) nil]
 
-           pfx-vocab
-           [(IRI. (str pfx-vocab term)) nil]
+          pfx-vocab
+          [(IRI. (str pfx-vocab term)) nil]
 
-           :else
-           (if-let [iri (if-not is-safe (to-iri repr ""))]
-             [iri nil]
-             [nil {:undefined-prefix pfx}])))
+          :else
+          (if-let [iri (if-not is-safe (to-iri repr ""))]
+            [iri nil]
+            [nil {:undefined-prefix pfx}])))
 
-       (not-empty vocab)
-       [(to-iri (str vocab repr) base) nil]
+      (not-empty vocab)
+      [(to-iri (str vocab repr) base) nil]
 
-       (nil? term-map)
-       [nil nil]
+      (nil? term-map)
+      [nil nil]
 
-       :else
-       (if-let [iri (or (term-map repr)
-                        (term-map (string/lower-case repr)))]
-         [(to-iri iri base) nil]
-         [nil {:undefined-term repr}])))))
+      :else
+      (if-let [iri (or (term-map repr)
+                       (term-map (string/lower-case repr)))]
+        [(to-iri iri base) nil]
+        [nil {:undefined-term repr}]))))
 
 (defn to-curie-or-iri [env repr]
   (let [is-safe (= (first repr) \[)
-        [iri err] (expand-term-or-curie repr (:base env) (:prefix-map env))
+        [iri err] (expand-term-or-curie (select-keys env [:base :prefix-map]) repr)
         res (or iri (if-not is-safe (to-iri repr (:base env))))]
     [res err]))
 
@@ -206,17 +207,17 @@
                           (not (or (not-empty (data :resources))
                                    (and (data :typeof)
                                         (not (data :about)))))))
-        [datatype dt-err _] (if-let [dt (not-empty (data :datatype))]
-                              (expand-term-or-curie env dt))
+        [datatype dt-err] (when-let [dt (not-empty (data :datatype))]
+                            (expand-term-or-curie env dt))
         as-xml (= datatype rdf:XMLLiteral)
         repr (or (data :content)
                  (if as-literal (if as-xml
                                   (dom/get-inner-xml el (env :xmlns-map) (env :lang))
-                                  (dom/get-text el))))]
-    [(if repr
-       (Literal. repr (or datatype
-                          (or (data :lang) (env :lang)))))
-     dt-err]))
+                                  (dom/get-text el))))
+        literal (when repr
+                  (Literal. repr (or datatype
+                                     (or (data :lang) (env :lang)))))]
+    [literal dt-err]))
 
 (defn get-object [env data]
   (let [link (or (data :rel) (data :rev))
@@ -255,7 +256,7 @@
          p-errs] (get-props-rels-revs-lists env data)
         [object-resource o-err] (get-object env data)
         [object-literal dt-err] (get-literal env data)
-        [types t-errs] (if-let [typeof (data :typeof)] (to-nodes env typeof))
+        [types t-errs] (if-let [typeof (:typeof data)] (to-nodes env typeof))
         errs (concat (remove nil? [s-err o-err dt-err]) p-errs t-errs)]
     [subject types object-resource object-literal
      props rels revs list-ps
@@ -268,16 +269,26 @@
            (not (data :inlist)))
     (next-bnode)))
 
-(defn- create-triple
-  ([s p o] [s p o])
-  ([s p o element]
-   (with-meta [s p o] {:element element})))
+(defn expand-attr [env attr]
+  (fn [el]
+    (update-in el [:attrs attr] (fn [value]
+                                  (let [[iris err] (to-nodes env value)]
+                                    (string/join \s (map :id iris)))))))
 
-(defn create-warning-triples [warning]
+(defn expand-curies [env el]
+  (html/at el
+           [[(html/attr? :property)]] (expand-attr env :property)
+           [[(html/attr? :typeof)]] (expand-attr env :typeof)))
+
+(defn- create-triple [env el [s p o]]
+  (let [element (expand-curies env el)]
+    (with-meta [s p o] {:element element})))
+
+(defn create-warning-triples [env el warning]
   (let [warn-node (next-bnode)
         descr (Literal. (str warning) "en")]
-    [(create-triple warn-node rdf:type rdfa:Warning)
-     (create-triple warn-node dc:description descr)]))
+    [(create-triple env el [warn-node rdf:type rdfa:Warning])
+     (create-triple env el [warn-node dc:description descr])]))
 
 (defn process-element [parent-env el]
   (let [[subject types o-resource o-literal
@@ -306,23 +317,23 @@
                                     [p [next-parent-o]]))))
         regular-triples (concat
                           (if o-literal
-                            (for [p props] (create-triple active-s p o-literal el)))
+                            (for [p props] (create-triple env el [active-s p o-literal])))
                           (if o-resource
                             (concat (for [p (if o-literal rels
                                                           (concat props rels))]
-                                      (create-triple active-s p o-resource el))
-                                    (for [p revs] (create-triple o-resource p active-s el)))))
+                                      (create-triple env el [active-s p o-resource]))
+                                    (for [p revs] (create-triple env el [o-resource p active-s])))))
         type-triples (let [ts (if (or has-about (not o-resource))
                                 active-s o-resource)]
-                       (for [t types] (create-triple ts rdf:type t el)))
+                       (for [t types] (create-triple env el [ts rdf:type t])))
         completed-triples (if completing-s
                             (let [{rels :rels revs :revs} incomplete]
                               (concat
-                                (for [rel rels] (create-triple parent-o rel completing-s el))
-                                (for [rev revs] (create-triple completing-s rev parent-o el)))))
+                                (for [rel rels] (create-triple env el [parent-o rel completing-s]))
+                                (for [rev revs] (create-triple env el [completing-s rev parent-o])))))
         vocab-triples (if (not-empty (data :vocab))
-                        [(create-triple (IRI. (env :base)) rdfa:usesVocabulary (IRI. (env :vocab)) el)])
-        proc-triples (mapcat create-warning-triples errs)
+                        [(create-triple env el [(IRI. (env :base)) rdfa:usesVocabulary (IRI. (env :vocab))])])
+        proc-triples (mapcat (partial create-warning-triples env el) errs)
         next-incomplete (cond
                           (and (or rels revs list-ps) (not active-o))
                           {:rels rels :revs revs :list-ps list-ps}
@@ -341,14 +352,14 @@
                       regular-triples
                       vocab-triples) proc-triples]))
 
-(defn gen-list-triples [s p l]
+(defn gen-list-triples [env el s p l]
   (loop [s s, p p, l l, triples nil]
     (if (empty? l)
       (conj triples [s p rdf:nil])
       (let [node (next-bnode)
             triples (concat triples
-                            [[s p node]
-                             [node rdf:first (first l)]])]
+                            [(create-triple env el [s p node])
+                             (create-triple env el [node rdf:first (first l)])])]
         (recur node rdf:rest (rest l) triples)))))
 
 (declare visit-element)
@@ -389,7 +400,7 @@
                             (for [[p l] combined-list-map
                                   :when (or changed-s
                                             (not (contains? current-list-map p)))]
-                              (gen-list-triples s p l)))
+                              (gen-list-triples env el s p l)))
         result-env (assoc env
                      :list-map (cond
                                  changed-s current-list-map

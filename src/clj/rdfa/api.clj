@@ -43,9 +43,9 @@
 (defn persist [result]
   (let [transactions (map (fn [triple]
                             (let [[s p o] triple]
-                              (merge {:s (pr-str s)
-                                      :p (pr-str p)
-                                      :o (pr-str o)}
+                              (merge {:s (or (:id s) (pr-str s))
+                                      :p (or (:id p) (pr-str p))
+                                      :o (or (:id o) (pr-str o))}
                                      (when-let [e (-> triple meta :element)]
                                        {:e e}))))
                           (:triples result))]
@@ -76,24 +76,24 @@
     (-> document
         (parse context)
         (extract context)
-        (persist)
-        println))
+        (persist))
+    :done)
 
   (d/q '[:find ?e .
          :where
-         [?node :o "#rdfa.rdf.IRI{:id \"http://schema.org/NutritionInformation\"}"]
+         [?node :o "http://schema.org/NutritionInformation"]
          [?node :e ?e]]
        @conn)
 
   (let [source (d/q '[:find ?e .
                       :where
-                      [?node :o "#rdfa.rdf.IRI{:id \"http://schema.org/NutritionInformation\"}"]
-                      [?node :e ?e]]
+                      [?node :e ?e]
+                      [?node :o "http://schema.org/NutritionInformation"]]
                     @conn)]
-    (->> ((html/snippet* (html/select source [:div]) []
-                         [:div] (html/content "sdfsdfa")))
+    (->> ((html/snippet* source []
+                         [(html/attr= :property "http://schema.org/proteinContent")] (html/content "sdfsdfa")))
          (html/emit*)
          (apply str)
-         (spit "resources/test-enlive.html")))
+         #_(spit "resources/test-enlive.html")))
 
   )

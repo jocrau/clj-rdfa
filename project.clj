@@ -8,18 +8,17 @@
   :source-paths ["src/clj" "src/cljs" "src/cljc"]
   :clean-targets ^{:protect false} ["target" "resources/public/js/target" "resources/public/js/cls-rdfa.js"]
 
-  :repositories {"stuartsierra-releases" "http://stuartsierra.com/maven2"}
-  :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
-                 [org.clojure/clojurescript "1.9.293"]
-                 [org.clojure/tools.cli "0.3.5"]
-                 [com.taoensso/timbre "4.5.1"]
-                 [org.jsoup/jsoup "1.10.1"]
-                 [hickory "0.7.0" :exclusions [org.jsoup/jsoup]]
-                 [datascript "0.15.5"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
+                 [org.clojure/clojurescript "1.10.339"]
+                 [org.clojure/tools.cli "0.4.1"]
+                 [com.taoensso/timbre "4.10.0"]
+                 [org.jsoup/jsoup "1.11.3"]
+                 [hickory "0.7.1" :exclusions [org.jsoup/jsoup]]
+                 [datascript "0.16.7"]
                  [enlive "1.1.6"]
-                 [kioo "0.5.0-SNAPSHOT" :exclusions [cljsjs/react org.omcljs/om]]]
+                 [kioo "0.5" :exclusions [org.omcljs/om]]]
   :profiles {:dev     {:plugins      [[lein-figwheel "0.5.9" :exclusions [org.clojure/clojure]]]
-                       :dependencies [[figwheel-sidecar "0.5.9"]]}
+                       :dependencies [[figwheel-sidecar "0.5.17"]]}
              :uberjar {:main rdfa.api
                        :aot  :all}}
   :cljsbuild {:builds {:dev {:figwheel     {:on-jsload "rdfa.api/init"}

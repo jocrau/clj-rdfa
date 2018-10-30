@@ -13,9 +13,7 @@
     [rdfa.rdf])
     #?(:cljs [rdfa.rdf :refer [IRI BNode Literal]])
     [rdfa.profiles :refer [detect-host-language extended-data get-host-env]]
-    [rdfa.iri :refer [resolve-iri]]
-    [net.cgrand.enlive-html :as html]
-    [net.cgrand.enlive-html :as html])
+    [rdfa.iri :refer [resolve-iri]])
   #?(:clj
      (:import
        [rdfa.rdf IRI BNode Literal])))
@@ -273,12 +271,13 @@
   (fn [el]
     (update-in el [:attrs attr] (fn [value]
                                   (let [[iris err] (to-nodes env value)]
-                                    (string/join \s (map :id iris)))))))
+                                    (string/join " " (map :id iris)))))))
 
 (defn expand-curies [env el]
-  (html/at el
-           [[(html/attr? :property)]] (expand-attr env :property)
-           [[(html/attr? :typeof)]] (expand-attr env :typeof)))
+  (condp some (-> el :attrs keys set)
+    #{:property} ((expand-attr env :property) el)
+    #{:typeof} ((expand-attr env :typeof) el)
+    el))
 
 (defn- create-triple [env el [s p o]]
   (let [element (expand-curies env el)]

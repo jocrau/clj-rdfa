@@ -1,4 +1,4 @@
-(ns rdfa.test.core
+(ns rdfa.core-test
   (:require
     [rdfa.extractor :refer [init-env expand-term-or-curie to-curie-or-iri parse-prefix next-bnode]]
     #?(:cljs [cljs.test :refer-macros [deftest is testing run-tests]])

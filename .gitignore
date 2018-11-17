@@ -7,3 +7,6 @@
 application.js
 main.js
 !/test/rdfa/test/repr.cljc
+.rebel_readline_history
+clj-rdfa-auto-testing.js
+clj-rdfa.js

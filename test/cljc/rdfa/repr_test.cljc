@@ -1,4 +1,4 @@
-(ns rdfa.test.repr
+(ns rdfa.repr-test
   (:require
     [rdfa.serializer :refer [repr-term repr-triple]]
     #?(:cljs [cljs.test :refer-macros [deftest is testing run-tests]])

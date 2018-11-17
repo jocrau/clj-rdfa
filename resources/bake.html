@@ -121,10 +121,10 @@
                                 <span property="http://bakepedia.org/ontology#quantity">2 or 3</span>
                                 <span property="http://bakepedia.org/ontology#preCondition"> </span>
                                 <span rel="http://bakepedia.org/ontology#ingredient">
-										<span typeof="http://bakepedia.org/ontology#Ingredient">
+										<span about="urn:uuid:b466386e-16eb-4555-bbd0-cd6195738df5" typeof="http://bakepedia.org/ontology#Ingredient">
 											<span property="http://bakepedia.org/ontology#name">Bananas</span>
 											<span rel="rdfs:seeAlso" style="display: none;">
-												<span typeof="http://dbpedia.org/class/yago/LeaveningAgents
+												<span about="urn:uuid:6bfe2444-fd16-4264-b0e6-cb3e5ca47e58" typeof="http://dbpedia.org/class/yago/LeaveningAgents
 															http://dbpedia.org/class/yago/Cereals
 															http://dbpedia.org/class/yago/FoodAdditives
 															rdfs:Resource
@@ -156,7 +156,7 @@
                         <p>1 serving contains</p>
 
                         <div rel="schema:nutrition">
-                            <div typeof="schema:NutritionInformation">
+                            <div about="urn:uuid:fe75a05f-886c-4d82-b345-15f0f4ed129b" typeof="schema:NutritionInformation">
                                 <div>Calories <span property="schema:calories">42</span>kcal</div>
                                 <div>Fat <span property="schema:fatContent">42</span>g</div>
                                 <div>Saturated Fat <span property="schema:saturatedFatContent">42</span>g</div>
@@ -172,7 +172,7 @@
                     <div class="span3">
                         <h4>Ratings</h4>
 
-                        <p property="schema:aggregateRating" typeof="schema:AggregateRating">
+                        <p about="urn:uuid:a7ea804c-5bf5-4507-9f1c-1d50b10bc69c" property="schema:aggregateRating" typeof="schema:AggregateRating">
                             <span property="schema:ratingValue">4</span> stars - based on <span property="schema:reviewCount">250</span> reviews
                         </p>
                     </div>
@@ -197,7 +197,7 @@
 <script type="text/javascript" src="http://code.jquery.com/ui/1.9.1/jquery-ui.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="public/js/clj-rdfa.js"></script>
-<script type="text/javascript">rdfa.api.init();</script>
+<script type="text/javascript">console.log(rdfa.api.parse());</script>
 
 </body>
 </html>

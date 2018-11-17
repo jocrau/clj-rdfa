@@ -46,5 +46,5 @@
   (is (= (parse-prefix "") nil)))
 
 (deftest bnodes-test
-  (is (not= (next-bnode) (next-bnode))))
+  (is (not= (:id (next-bnode)) (:id (next-bnode)))))
 
